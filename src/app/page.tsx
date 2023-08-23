@@ -1,8 +1,8 @@
 "use client";
 
-import Whiteboard from "./Whiteboard";
-import Debug from "./Debug";
-import { NpcProvider } from "./npc-context";
+import Whiteboard from "@/app/components/Whiteboard";
+import Debug from "@/app/components/Debug";
+import { NpcProvider } from "@/app/components/npc-context";
 
 export default function Home() {
   return (
