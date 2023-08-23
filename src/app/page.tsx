@@ -13,7 +13,7 @@ export default function Home() {
           <div className="w-full rounded overflow-clip drop-shadow-lg">
             <Whiteboard />
           </div>
-          <div className="grow-0 shrink-0 w-40">
+          <div className="grow-0 shrink-0 w-60">
             <Debug />
           </div>
         </NpcProvider>
