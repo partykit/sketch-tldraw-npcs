@@ -1,4 +1,7 @@
 {
     "main": "src/partykit/server.ts",
-    "name": "dolphin-party"
+    "name": "dolphin-party",
+    "parties": {
+        "npc": "src/partykit/npc.ts"
+    }
 }

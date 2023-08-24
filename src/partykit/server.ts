@@ -13,7 +13,7 @@ import { type TLInstancePresence } from "@tldraw/tldraw";
 //export default { onConnect };
 export default {
   onConnect(ws, room) {
-    console.log("onConnect");
+    console.log("[main] onConnect: someone connected");
     return onConnect(ws, room, {
       callback: {
         async handler(ydoc) {

@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Editor, InstancePresenceRecordType, TLShapeId } from "@tldraw/tldraw";
 import { useNpc } from "./npc-context";
 import { POOL_RADIUS } from "./CreateEmbassy";
+import YPartyKitProvider from "y-partykit/provider";
+import * as Y from "yjs";
 
 export default function CreateNpc() {
   const { editor, embassyId } = useNpc();
@@ -38,13 +40,26 @@ function NpcUser() {
   const MOVING_CURSOR_SPEED = 0.3;
   const MOVING_CURSOR_RADIUS = POOL_RADIUS * 0.7;
 
+  const doc = new Y.Doc();
+  const provider = new YPartyKitProvider(
+    "127.0.0.1:1999",
+    "dolphin-example",
+    doc,
+    {
+      connect: true,
+    }
+  );
+
   console.log(embassyCentroid);
 
   if (!editor) return null;
   if (!embassyCentroid) return null;
 
+  const yClientId = provider.awareness.clientID.toString();
+  const presenceId = InstancePresenceRecordType.createId(yClientId);
+
   const presence = InstancePresenceRecordType.create({
-    id: InstancePresenceRecordType.createId(editor.store.id),
+    id: presenceId, //InstancePresenceRecordType.createId(editor.store.id),
     currentPageId: editor.currentPageId,
     userId: "npc-dolphin",
     userName: "🐬", // dolphin emoji
@@ -74,13 +89,18 @@ function NpcUser() {
       y: embassyCentroid.y + Math.sin(t * Math.PI * 2) * MOVING_CURSOR_RADIUS,
     };
 
-    editor.store.put([
+    /*editor.store.put([
       {
         ...presence,
         cursor,
         lastActivityTimestamp: now,
       },
-    ]);
+    ]);*/
+    provider.awareness.setLocalStateField("presence", {
+      ...presence,
+      cursor,
+      lastActivityTimestamp: now,
+    });
 
     rRaf.current = requestAnimationFrame(loop);
   }
@@ -96,9 +116,17 @@ function NpcUser() {
     if (MOVING_CURSOR_SPEED > 0) {
       rRaf.current = requestAnimationFrame(loop);
     } else {
-      editor.store.put([{ ...presence, lastActivityTimestamp: Date.now() }]);
+      //editor.store.put([{ ...presence, lastActivityTimestamp: Date.now() }]);
+      provider.awareness.setLocalStateField("presence", {
+        ...presence,
+        lastActivityTimestamp: Date.now(),
+      });
       rRaf.current = setInterval(() => {
-        editor.store.put([{ ...presence, lastActivityTimestamp: Date.now() }]);
+        //editor.store.put([{ ...presence, lastActivityTimestamp: Date.now() }]);
+        provider.awareness.setLocalStateField("presence", {
+          ...presence,
+          lastActivityTimestamp: Date.now(),
+        });
       }, 1000);
     }
   }, [editor]);
