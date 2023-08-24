@@ -4,7 +4,7 @@
  * and the hostName
  * ws://127.0.0.1:1999/party
  */
-/*
+
 import { PartyKitServer } from "partykit/server";
 import { onConnect } from "y-partykit";
 
@@ -34,4 +34,3 @@ export default {
     });
   },
 } satisfies PartyKitServer;
-*/

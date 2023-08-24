@@ -11,17 +11,23 @@ import {
 } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useNpc } from "./npc-context";
-import { useEffect } from "react";
+import { useYjsStore } from "./useYjsStore";
 
 export default function APIExample() {
   const { setEditor } = useNpc();
+
+  const store = useYjsStore({
+    roomId: "dolphin-example",
+    hostUrl: "ws://127.0.0.1:1999/party",
+  });
+
   const handleMount = (editor: Editor) => {
     setEditor(editor);
   };
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
-      <Tldraw persistenceKey="api-example" onMount={handleMount}>
+      <Tldraw store={store} onMount={handleMount}>
         <InsideOfEditorContext />
       </Tldraw>
     </div>
