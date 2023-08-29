@@ -131,11 +131,12 @@ export default class NPC implements PartyServer {
       // create a new x and y which are 100 away from msg.x and msg.y in a random direction
       // randomise the angle then use trig
       const angle = Math.random() * 2 * Math.PI;
-      const x = composeMessage.x + 100 * Math.cos(angle);
-      const y = composeMessage.y + 100 * Math.sin(angle);
+      const x = composeMessage.x + 300 * Math.cos(angle);
+      const y = composeMessage.y + 300 * Math.sin(angle);
+      await this.travel(x, y);
       const blankTextShape = await this.tldraw?.makeTextShape(x, y);
       let poem = "";
-      getChatCompletionResponse(
+      await getChatCompletionResponse(
         this.party.env,
         AI_PROMPT,
         async () => {
@@ -146,6 +147,7 @@ export default class NPC implements PartyServer {
           this.tldraw!.updateShape(blankTextShape!, { props: { text: poem } });
         }
       );
+      await this.travel(composeMessage.x, composeMessage.y);
     }
   }
 
@@ -177,6 +179,36 @@ export default class NPC implements PartyServer {
     setTimeout(() => {
       clearInterval(interval);
     }, 5000);
+  }
+
+  async travel(x: number, y: number) {
+    const currentTime = Date.now();
+    const CURSOR_SPEED = 3;
+
+    const updatePosition = async () => {
+      const currentPresence = await this.tldraw!.getPresence();
+      const { x: currentX, y: currentY } = currentPresence.cursor;
+      // Get the distance between the current position and the target position
+      const distance = Math.sqrt((currentX - x) ** 2 + (currentY - y) ** 2);
+      // If it's less than the speed, we're done
+      if (distance < CURSOR_SPEED) {
+        return false;
+      }
+      // Otherwise, move towards the target
+      const angle = Math.atan2(y - currentY, x - currentX);
+      const newX = currentX + CURSOR_SPEED * Math.cos(angle);
+      const newY = currentY + CURSOR_SPEED * Math.sin(angle);
+      await this.tldraw!.updatePresence({ cursor: { x: newX, y: newY } });
+      return true;
+    };
+
+    // Call updatePosition every 10ms until it returns false
+    const interval = setInterval(async () => {
+      const keepGoing = await updatePosition();
+      if (!keepGoing) {
+        clearInterval(interval);
+      }
+    }, 10);
   }
 
   onAwarenessUpdate() {

@@ -15,6 +15,7 @@ export default class TldrawUtils {
   doc: Y.Doc | undefined;
   awareness: YProvider["awareness"] | undefined;
 
+  clientId: number | undefined;
   presenceId: any;
   userId: string | undefined;
   roomId: string | undefined;
@@ -31,6 +32,7 @@ export default class TldrawUtils {
 
     this.doc = doc;
     this.awareness = awareness;
+    this.clientId = clientId;
     this.presenceId = InstancePresenceRecordType.createId(clientId.toString());
     this.userId = serverName;
     this.roomId = `tl_${partyId}`;
@@ -41,6 +43,13 @@ export default class TldrawUtils {
   async summon(currentPageId: string, presenceFields: {}) {
     this.pageId = currentPageId as TLPageId;
     await this.updatePresence(presenceFields);
+  }
+
+  async getPresence() {
+    return (
+      this.awareness?.getStates()?.get(this.clientId!)?.presence ??
+      this.makePresenceRecord()
+    );
   }
 
   async updatePresence(presenceFields: any) {
