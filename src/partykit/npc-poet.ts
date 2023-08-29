@@ -11,6 +11,8 @@ import type { TLPageId } from "@tldraw/tldraw";
 import * as Y from "yjs";
 import YProvider from "y-partykit/provider";
 
+import { getChatCompletionResponse, AIMessage } from "./utils/openai";
+
 // The NPC runs as a state machine
 enum NPCState {
   NotConnected,
@@ -44,6 +46,14 @@ export type ComposeMessage = {
   x: number;
   y: number;
 };
+
+const AI_PROMPT: AIMessage[] = [
+  {
+    role: "system",
+    content:
+      "You are a dolphin poet. Compose a 2-4 line poem about the ocean, fish, or some other topic of high interest to dolphins.",
+  },
+];
 
 export default class NPC implements PartyServer {
   constructor(readonly party: Party) {}
@@ -105,8 +115,35 @@ export default class NPC implements PartyServer {
       const y = composeMessage.y + 100 * Math.sin(angle);
       const map = this.doc!.getMap(`tl_${this.party.id}`);
       const index = getNewHighestIndex(map, this.npcMemory.pageId);
-      const text = await makeText(this.npcMemory.pageId, index, x, y);
-      map.set(text.id, text);
+      const shapeId = await makeShapeId();
+      let poem = "";
+      getChatCompletionResponse(
+        this.party.env,
+        AI_PROMPT,
+        async () => {
+          const text = makeText(
+            shapeId,
+            this.npcMemory.pageId,
+            index,
+            x,
+            y,
+            poem
+          );
+          map.set(text.id, text);
+        },
+        async (token) => {
+          poem += token;
+          const text = makeText(
+            shapeId,
+            this.npcMemory.pageId,
+            index,
+            x,
+            y,
+            poem
+          );
+          map.set(text.id, text);
+        }
+      );
     }
   }
 
@@ -227,9 +264,19 @@ async function makePresence(
   return InstancePresenceRecordType.create(record);
 }
 
-async function makeText(pageId: string, index: string, x: number, y: number) {
+async function makeShapeId() {
   const { createShapeId } = await import("@tldraw/tldraw");
-  const id = createShapeId();
+  return createShapeId();
+}
+
+function makeText(
+  id: string,
+  pageId: string,
+  index: string,
+  x: number,
+  y: number,
+  text = ""
+) {
   const textShape = {
     id,
     type: "text",
@@ -244,7 +291,7 @@ async function makeText(pageId: string, index: string, x: number, y: number) {
       size: "m",
       w: 100,
       // "w": etc
-      text: "hello mabbie!",
+      text: text,
       font: "draw",
       align: "middle",
       autoSize: true,

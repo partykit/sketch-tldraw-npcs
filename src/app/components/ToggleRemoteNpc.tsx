@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import usePartySocket from "partysocket/react";
 import { useNpc } from "./npc-context";
 
-import type { InitMessage, AnimateMessage } from "@/partykit/npc-poet";
+import type {
+  InitMessage,
+  AnimateMessage,
+  ComposeMessage,
+} from "@/partykit/npc-poet";
 
 export default function ToggleRemoteNpc() {
   const { editor, embassyCentroid } = useNpc();
@@ -87,7 +91,7 @@ export default function ToggleRemoteNpc() {
           disabled:cursor-not-allowed
           text-neutral-500 disabled:text-neutral-400"
         >
-          Create Text
+          Compose Poem
         </button>
       )}
     </>
