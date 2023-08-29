@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   DefaultColorStyle,
   Editor,
@@ -8,6 +9,8 @@ import {
   Tldraw,
   createShapeId,
   useEditor,
+  useValue,
+  TLInstancePresence,
 } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useNpc } from "./npc-context";
@@ -23,6 +26,11 @@ export default function APIExample() {
 
   const handleMount = (editor: Editor) => {
     setEditor(editor);
+    // Can update a chatMessage on self, but it won't appear to self
+    editor.updateInstanceState({
+      chatMessage: "HELLO WORLD",
+      isChatting: true,
+    });
   };
 
   return (
