@@ -133,35 +133,17 @@ export default class NPC implements PartyServer {
       const angle = Math.random() * 2 * Math.PI;
       const x = composeMessage.x + 100 * Math.cos(angle);
       const y = composeMessage.y + 100 * Math.sin(angle);
-      const map = this.doc!.getMap(`tl_${this.party.id}`);
-      const index = getNewHighestIndex(map, this.npcMemory.pageId);
-      const shapeId = await makeShapeId();
+      const blankTextShape = await this.tldraw?.makeTextShape(x, y);
       let poem = "";
       getChatCompletionResponse(
         this.party.env,
         AI_PROMPT,
         async () => {
-          const text = makeText(
-            shapeId,
-            this.npcMemory.pageId,
-            index,
-            x,
-            y,
-            poem
-          );
-          map.set(text.id, text);
+          this.tldraw!.updateShape(blankTextShape!);
         },
         async (token) => {
           poem += token;
-          const text = makeText(
-            shapeId,
-            this.npcMemory.pageId,
-            index,
-            x,
-            y,
-            poem
-          );
-          map.set(text.id, text);
+          this.tldraw!.updateShape(blankTextShape!, { props: { text: poem } });
         }
       );
     }
@@ -222,94 +204,4 @@ export default class NPC implements PartyServer {
       }, 500);
     }*/
   }
-}
-
-async function makePresence(
-  clientId: number,
-  userId: string,
-  pageId: string,
-  x: number,
-  y: number
-) {
-  const { InstancePresenceRecordType } = await import("@tldraw/tldraw");
-  const presenceId = InstancePresenceRecordType.createId(clientId.toString());
-
-  const record = {
-    id: presenceId, //InstancePresenceRecordType.createId(editor.store.id),
-    currentPageId: pageId as TLPageId,
-    userId: userId,
-    userName: "🐬", // dolphin emoji
-    cursor: {
-      x: x,
-      y: y,
-      type: "default",
-      rotation: 0,
-    },
-    chatMessage: "eeee e ee",
-    color: "#4aa181", //"#d9f3d6" is the completion color for AI. The darker is the button color
-  };
-  //console.log("[npc] makePresence", JSON.stringify(record, null, 2));
-  return InstancePresenceRecordType.create(record);
-}
-
-async function makeShapeId() {
-  const { createShapeId } = await import("@tldraw/tldraw");
-  return createShapeId();
-}
-
-function makeText(
-  id: string,
-  pageId: string,
-  index: string,
-  x: number,
-  y: number,
-  text = ""
-) {
-  const textShape = {
-    id,
-    type: "text",
-    x,
-    y,
-    isLocked: false,
-    rotation: 0,
-    opacity: 1,
-    meta: {},
-    props: {
-      color: "black",
-      size: "m",
-      w: 100,
-      // "w": etc
-      text: text,
-      font: "draw",
-      align: "middle",
-      autoSize: true,
-      scale: 1,
-    },
-    parentId: pageId as TLPageId,
-    index: index,
-    typeName: "shape",
-  };
-  return textShape;
-}
-
-function getNewHighestIndex(map: Y.Map<any>, pageId: string) {
-  // Get all indexes of records with `parentId: pageId as TLPageId`
-  // We can use map.entries, or map.values
-  const records = Array.from(map.values());
-  const indexes = records
-    .filter((record) => record.parentId === (pageId as TLPageId))
-    .map((record) => record.index);
-  // Find the highest index using string comparison ("a6" is greater than "a5")
-  const highestIndex = indexes.reduce((highest, index) => {
-    if (index > highest) {
-      return index;
-    }
-    return highest;
-  }, "a0");
-  // Increment the highest index
-  const newHighestIndex = highestIndex.replace(
-    /(\d+)$/,
-    (match: string, number: string) => `${match}${parseInt(number, 10) + 1}`
-  );
-  return newHighestIndex;
 }
