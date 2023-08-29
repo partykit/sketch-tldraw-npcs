@@ -12,6 +12,7 @@ import * as Y from "yjs";
 import YProvider from "y-partykit/provider";
 
 import { getChatCompletionResponse, AIMessage } from "./utils/openai";
+import TldrawUtils from "./utils/tldraw";
 
 // The NPC runs as a state machine
 enum NPCState {
@@ -58,13 +59,11 @@ const AI_PROMPT: AIMessage[] = [
 export default class NPC implements PartyServer {
   constructor(readonly party: Party) {}
 
-  // Retain details about this server
-  host: string | undefined;
-  server: string | undefined;
-
   doc: Y.Doc | undefined;
   provider: YProvider | undefined;
   awareness: YProvider["awareness"] | undefined;
+
+  tldraw: TldrawUtils | undefined;
 
   npcState: NPCState = NPCState.NotConnected;
   npcMemory: NPCMemory = {} as NPCMemory;
@@ -82,11 +81,31 @@ export default class NPC implements PartyServer {
   }*/
 
   async onConnect(connection: PartyConnection, ctx: PartyConnectionContext) {
-    const url = new URL(ctx.request.url);
-    this.host = url.host;
-    // the url has the pattern /parties/:server/:party.id. We need to grab ':server'
-    // Be explicit about this: remove '/parties' from the beginning, and go up to the next '/'
-    this.server = url.pathname.slice("/parties".length).split("/")[1];
+    if (!this.tldraw) {
+      // This is shared amongst all connections, So if it's not here already,
+      // we need to set it up
+
+      // the url has the pattern /parties/:server/:party.id. We need to grab ':server'
+      // Be explicit about this: remove '/parties' from the beginning, and go up to the next '/'
+      const url = new URL(ctx.request.url);
+      const host = url.host;
+      const server = url.pathname.slice("/parties".length).split("/")[1];
+      const partyId = this.party.id;
+
+      this.doc = new Y.Doc();
+      this.provider = new YProvider(host, partyId, this.doc);
+      this.awareness = this.provider.awareness;
+      this.doc.on("update", this.onContentUpdate.bind(this));
+      this.awareness.on("change", this.onAwarenessUpdate.bind(this));
+
+      this.tldraw = await new TldrawUtils().init(
+        this.doc,
+        this.awareness,
+        this.doc.clientID,
+        server,
+        partyId
+      );
+    }
   }
 
   async onMessage(message: string | ArrayBuffer, connection: PartyConnection) {
@@ -95,8 +114,9 @@ export default class NPC implements PartyServer {
     if (msg.type === "init") {
       const initMessage = msg as InitMessage;
       const { pageId, embassyX, embassyY } = initMessage;
-      this.npcMemory.pageId = pageId;
-      await this.initNpc(pageId, embassyX, embassyY);
+      await this.tldraw!.summon(pageId, {
+        cursor: { x: embassyX, y: embassyY },
+      });
     } else if (msg.type === "animate") {
       const animateMessage = msg as AnimateMessage;
       this.npcMemory = {
@@ -147,28 +167,6 @@ export default class NPC implements PartyServer {
     }
   }
 
-  async initNpc(pageId: string, embassyX: number, embassyY: number) {
-    const room = this.party.id;
-    this.doc = new Y.Doc();
-    this.provider = new YProvider(this.host!, room, this.doc);
-    this.awareness = this.provider.awareness;
-    this.doc.on("update", this.onContentUpdate.bind(this));
-    this.awareness.on("change", this.onAwarenessUpdate.bind(this));
-    const x = embassyX;
-    const y = embassyY;
-    const presence = await makePresence(
-      this.doc.clientID,
-      this.server!,
-      pageId,
-      x,
-      y
-    );
-    this.awareness.setLocalStateField("presence", {
-      ...presence,
-      lastActivityTimestamp: Date.now(),
-    });
-  }
-
   animateNpc() {
     this.npcMemory.startTime = Date.now();
     const MOVING_CURSOR_SPEED = 0.3;
@@ -185,17 +183,7 @@ export default class NPC implements PartyServer {
       const y =
         this.npcMemory.centralY +
         this.npcMemory.radius * Math.sin(2 * Math.PI * t);
-      const presence = await makePresence(
-        this.doc!.clientID,
-        this.server!,
-        this.npcMemory.pageId,
-        x,
-        y
-      );
-      this.awareness!.setLocalStateField("presence", {
-        ...presence,
-        lastActivityTimestamp: currentTime,
-      });
+      await this.tldraw!.updatePresence({ cursor: { x, y } });
     };
 
     // Call updatePosition every 10ms, and cancel after 5s
