@@ -39,6 +39,12 @@ export type AnimateMessage = {
   radius: number;
 };
 
+export type ComposeMessage = {
+  type: "compose";
+  x: number;
+  y: number;
+};
+
 export default class NPC implements PartyServer {
   constructor(readonly party: Party) {}
 
@@ -90,6 +96,17 @@ export default class NPC implements PartyServer {
         radius: animateMessage.radius,
       };
       this.animateNpc();
+    } else if (msg.type === "compose") {
+      const composeMessage = msg as ComposeMessage;
+      // create a new x and y which are 100 away from msg.x and msg.y in a random direction
+      // randomise the angle then use trig
+      const angle = Math.random() * 2 * Math.PI;
+      const x = composeMessage.x + 100 * Math.cos(angle);
+      const y = composeMessage.y + 100 * Math.sin(angle);
+      const map = this.doc!.getMap(`tl_${this.party.id}`);
+      const index = getNewHighestIndex(map, this.npcMemory.pageId);
+      const text = await makeText(this.npcMemory.pageId, index, x, y);
+      map.set(text.id, text);
     }
   }
 
@@ -208,4 +225,56 @@ async function makePresence(
   };
   //console.log("[npc] makePresence", JSON.stringify(record, null, 2));
   return InstancePresenceRecordType.create(record);
+}
+
+async function makeText(pageId: string, index: string, x: number, y: number) {
+  const { createShapeId } = await import("@tldraw/tldraw");
+  const id = createShapeId();
+  const textShape = {
+    id,
+    type: "text",
+    x,
+    y,
+    isLocked: false,
+    rotation: 0,
+    opacity: 1,
+    meta: {},
+    props: {
+      color: "black",
+      size: "m",
+      w: 100,
+      // "w": etc
+      text: "hello mabbie!",
+      font: "draw",
+      align: "middle",
+      autoSize: true,
+      scale: 1,
+    },
+    parentId: pageId as TLPageId,
+    index: index,
+    typeName: "shape",
+  };
+  return textShape;
+}
+
+function getNewHighestIndex(map: Y.Map<any>, pageId: string) {
+  // Get all indexes of records with `parentId: pageId as TLPageId`
+  // We can use map.entries, or map.values
+  const records = Array.from(map.values());
+  const indexes = records
+    .filter((record) => record.parentId === (pageId as TLPageId))
+    .map((record) => record.index);
+  // Find the highest index using string comparison ("a6" is greater than "a5")
+  const highestIndex = indexes.reduce((highest, index) => {
+    if (index > highest) {
+      return index;
+    }
+    return highest;
+  }, "a0");
+  // Increment the highest index
+  const newHighestIndex = highestIndex.replace(
+    /(\d+)$/,
+    (match: string, number: string) => `${match}${parseInt(number, 10) + 1}`
+  );
+  return newHighestIndex;
 }
