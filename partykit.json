@@ -1,7 +1,7 @@
 {
     "main": "src/partykit/server.ts",
-    "name": "dolphin-party",
+    "name": "whiteboard",
     "parties": {
-        "npc": "src/partykit/npc.ts"
+        "npcPoet": "src/partykit/npc-poet.ts"
     }
 }

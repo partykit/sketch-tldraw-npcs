@@ -6,7 +6,7 @@ export default function ToggleRemoteNpc() {
 
   const socket = usePartySocket({
     host: "127.0.0.1:1999",
-    party: "npc",
+    party: "npcPoet",
     room: "dolphin-example",
     startClosed: true,
   });
