@@ -3,5 +3,6 @@
     "name": "whiteboard",
     "parties": {
         "npcPoet": "src/partykit/npc-poet.ts"
-    }
+    },
+    "persist": false
 }

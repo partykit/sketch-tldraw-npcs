@@ -1,7 +1,6 @@
 import { useNpc } from "./npc-context";
 
 import CreateEmbassy from "./CreateEmbassy";
-import CreateNpc from "./CreateNpc";
 import ToggleRemoteNpc from "./ToggleRemoteNpc";
 
 export default function Debug() {
@@ -11,7 +10,6 @@ export default function Debug() {
       <h1 className="uppercase tracking-widest font-medium">Debug</h1>
       <p>Got editor: {editor === null ? "No" : "Yes"} </p>
       <CreateEmbassy />
-      <CreateNpc />
       <ToggleRemoteNpc />
     </section>
   );

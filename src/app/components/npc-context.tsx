@@ -42,7 +42,8 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
     if (!editor) return;
     if (!embassyId) return;
 
-    const embassy = editor.getShape(embassyId)!;
+    const embassy = editor.getShape(embassyId);
+    if (!embassy) return;
     const centroid = getCentroidForEmbassy(embassy);
     setEmbassyCentroid(centroid);
   }, [embassyId, editor]);
