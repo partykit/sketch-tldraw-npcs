@@ -83,6 +83,14 @@ export default function NpcPoet() {
       >
         Circle
       </Button>
+      <Button
+        onClick={() => {
+          socket.send(JSON.stringify({ type: "compose" } as ComposeMessage));
+        }}
+        disabled={npcState === NPCState.NotConnected}
+      >
+        Compose
+      </Button>
     </>
   );
 }

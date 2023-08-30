@@ -28,13 +28,6 @@ type NPCMemory = {
   startTime: number;
 };
 
-export type InitMessage = {
-  type: "init";
-  pageId: string;
-  embassyX: number;
-  embassyY: number;
-};
-
 export type SummonMessage = {
   type: "summon";
   pageId: string;
@@ -42,15 +35,11 @@ export type SummonMessage = {
 
 export type AnimateMessage = {
   type: "animate";
-  x: number;
-  y: number;
   radius: number;
 };
 
 export type ComposeMessage = {
   type: "compose";
-  x: number;
-  y: number;
 };
 
 export type BanishMessage = {
@@ -151,19 +140,13 @@ export default class NPC implements PartyServer {
 
   async onMessage(message: string | ArrayBuffer, connection: PartyConnection) {
     const msg = JSON.parse(message as string);
-    console.log(
+    /*console.log(
       "[npc] onMessage",
       JSON.stringify(msg, null, 2),
       "embassy",
       JSON.stringify(this.embassy, null, 2)
-    );
-    if (msg.type === "init") {
-      const initMessage = msg as InitMessage;
-      const { pageId, embassyX, embassyY } = initMessage;
-      await this.tldraw!.summon(pageId, {
-        cursor: { x: embassyX, y: embassyY },
-      });
-    } else if (msg.type === "summon") {
+    );*/
+    if (msg.type === "summon") {
       const summonMessage = msg as SummonMessage;
       const { pageId } = summonMessage;
       if (!this.embassy) return;
@@ -187,9 +170,11 @@ export default class NPC implements PartyServer {
       const composeMessage = msg as ComposeMessage;
       // create a new x and y which are 100 away from msg.x and msg.y in a random direction
       // randomise the angle then use trig
+      const originX = this.embassy!.x;
+      const originY = this.embassy!.y;
       const angle = Math.random() * 2 * Math.PI;
-      const x = composeMessage.x + 300 * Math.cos(angle);
-      const y = composeMessage.y + 300 * Math.sin(angle);
+      const x = originX + 300 * Math.cos(angle);
+      const y = originY + 300 * Math.sin(angle);
       await this.travel(x, y);
       const blankTextShape = await this.tldraw?.makeTextShape(x, y);
       let poem = "";
@@ -204,7 +189,7 @@ export default class NPC implements PartyServer {
           this.tldraw!.updateShape(blankTextShape!, { props: { text: poem } });
         }
       );
-      await this.travel(composeMessage.x, composeMessage.y);
+      await this.travel(originX, originY);
     } else if (msg.type === "banish") {
       this.tldraw!.banish();
       this.changeState(NPCState.NotConnected);
