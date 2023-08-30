@@ -63,9 +63,7 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
           }
         });
         Object.values(changes.removed).forEach((record) => {
-          console.log("removed", record.id, embassyId);
           if (record.id === embassyId) {
-            console.log("removing...");
             setEmbassy(null);
           }
         });

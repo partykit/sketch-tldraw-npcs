@@ -91,6 +91,14 @@ export default function NpcPoet() {
       >
         Compose
       </Button>
+      <Button
+        onClick={() => {
+          socket.send(JSON.stringify({ type: "paint" }));
+        }}
+        disabled={npcState !== NPCState.Painting}
+      >
+        Paint?
+      </Button>
     </>
   );
 }

@@ -18,6 +18,7 @@ import TldrawUtils from "./utils/tldraw";
 export enum NPCState {
   NotConnected,
   Idle,
+  Painting,
 }
 
 type NPCMemory = {
@@ -26,6 +27,7 @@ type NPCMemory = {
   centralY: number;
   radius: number;
   startTime: number;
+  star: TLShape;
 };
 
 export type SummonMessage = {
@@ -190,6 +192,13 @@ export default class NPC implements PartyServer {
         }
       );
       await this.travel(originX, originY);
+    } else if (msg.type === "paint") {
+      if (!this.npcMemory.star) return;
+      this.tldraw!.updateShape(this.npcMemory.star, {
+        props: { fill: "pattern", color: "yellow" },
+      });
+      await this.travel(this.embassy!.x, this.embassy!.y);
+      this.changeState(NPCState.Idle);
     } else if (msg.type === "banish") {
       this.tldraw!.banish();
       this.changeState(NPCState.NotConnected);
@@ -236,7 +245,7 @@ export default class NPC implements PartyServer {
       // Get the distance between the current position and the target position
       const distance = Math.sqrt((currentX - x) ** 2 + (currentY - y) ** 2);
       // If it's less than the speed, we're done
-      if (distance < CURSOR_SPEED) {
+      if (distance < CURSOR_SPEED * 5) {
         return false;
       }
       // Otherwise, move towards the target
@@ -277,6 +286,26 @@ export default class NPC implements PartyServer {
       this.embassy = { x: embassy.x, y: embassy.y };
     }
 
+    // Also watch for shapes which are stars
+    // Characteristics: parentId == this.tldraw.pageId, typeName == "shape", props.geo == "star"
+    map.forEach(async (value: unknown, id: string, map: Y.Map<unknown>) => {
+      const record = value as TLShape;
+      if (
+        record.typeName === "shape" &&
+        record.parentId === this.tldraw!.pageId &&
+        (record.props as any).geo === "star" &&
+        (record.props as any).fill !== "pattern" &&
+        (record.props as any).color !== "yellow"
+      ) {
+        await this.onNewStarShape(record);
+      }
+    });
     //console.log("[npc] onContentUpdate", JSON.stringify(this.embassy, null, 2));
+  }
+
+  async onNewStarShape(shape: TLShape) {
+    await this.travel(shape.x, shape.y);
+    this.npcMemory["star"] = shape;
+    this.changeState(NPCState.Painting);
   }
 }
