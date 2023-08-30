@@ -126,6 +126,20 @@ export default class NPC implements PartyServer {
     }
 
     connection.send(JSON.stringify({ type: "state", state: this.npcState }));
+    if (this.npcState !== NPCState.NotConnected) {
+      // Update the current presence state so new users can see the NPC
+      await this.tldraw.updatePresence({});
+    }
+  }
+
+  onClose(connection: PartyConnection) {
+    const count = Array.from(this.party.getConnections()).length;
+    if (count === 0) {
+      console.log("Final connection closed, shutting down");
+      this.doc?.destroy();
+      this.tldraw = undefined;
+      this.npcState = NPCState.NotConnected;
+    }
   }
 
   changeState(newState: NPCState) {

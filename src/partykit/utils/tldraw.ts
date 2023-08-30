@@ -58,7 +58,7 @@ export default class TldrawUtils {
   }
 
   async updatePresence(presenceFields: any) {
-    const presence = await this.makePresenceRecord();
+    const presence = await this.getPresence();
     const cursor = {
       ...presence.cursor,
       ...(presenceFields.cursor ?? {}),
@@ -69,7 +69,7 @@ export default class TldrawUtils {
       cursor,
       lastActivityTimestamp: Date.now(),
     };
-    console.log("newPresence", JSON.stringify(newPresence, null, 2));
+    //console.log("newPresence", JSON.stringify(newPresence, null, 2));
     this.awareness?.setLocalStateField("presence", newPresence);
   }
 
