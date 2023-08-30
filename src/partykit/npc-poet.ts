@@ -14,6 +14,8 @@ import YProvider from "y-partykit/provider";
 import { getChatCompletionResponse, AIMessage } from "./utils/openai";
 import TldrawUtils from "./utils/tldraw";
 
+import { getCentroidForEmbassy } from "@/shared/embassy";
+
 // The NPC runs as a state machine
 export enum NPCState {
   NotConnected,
@@ -283,7 +285,7 @@ export default class NPC implements PartyServer {
       this.embassy = undefined;
     }
     if (embassy) {
-      this.embassy = { x: embassy.x, y: embassy.y };
+      this.embassy = getCentroidForEmbassy(embassy);
     }
 
     // Also watch for shapes which are stars

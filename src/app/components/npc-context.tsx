@@ -8,7 +8,6 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { Editor, TLShapeId, TLShape, createShapeId } from "@tldraw/tldraw";
-import { getCentroidForEmbassy } from "./CreateEmbassy";
 
 import { EMBASSY_ID_STRING } from "./CreateEmbassy";
 
@@ -16,14 +15,12 @@ type NpcContextType = {
   editor: Editor | null;
   setEditor: (editor: Editor | null) => void;
   embassy: TLShape | null;
-  embassyCentroid: { x: number; y: number } | null;
 };
 
 const NpcContext = createContext<NpcContextType>({
   editor: null,
   setEditor: () => {},
   embassy: null,
-  embassyCentroid: null,
 });
 
 export function useNpc() {
@@ -33,18 +30,6 @@ export function useNpc() {
 export function NpcProvider({ children }: { children: React.ReactNode }) {
   const [editor, setEditor] = useState<Editor | null>(null);
   const [embassy, setEmbassy] = useState<TLShape | null>(null);
-  const [embassyCentroid, setEmbassyCentroid] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
-
-  useEffect(() => {
-    if (!editor) return;
-    if (!embassy) return;
-
-    const centroid = getCentroidForEmbassy(embassy);
-    setEmbassyCentroid(centroid);
-  }, [embassy, editor]);
 
   useEffect(() => {
     if (!editor) return;
@@ -82,7 +67,6 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
         editor: editor,
         setEditor: setEditor,
         embassy: embassy,
-        embassyCentroid: embassyCentroid,
       }}
     >
       {children}
