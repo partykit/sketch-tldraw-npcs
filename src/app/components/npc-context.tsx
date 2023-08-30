@@ -7,8 +7,10 @@
  */
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { Editor, TLShapeId } from "@tldraw/tldraw";
+import { Editor, TLShapeId, createShapeId } from "@tldraw/tldraw";
 import { getCentroidForEmbassy } from "./CreateEmbassy";
+
+import { EMBASSY_ID_STRING } from "./CreateEmbassy";
 
 type NpcContextType = {
   editor: Editor | null;
@@ -47,6 +49,31 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
     const centroid = getCentroidForEmbassy(embassy);
     setEmbassyCentroid(centroid);
   }, [embassyId, editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+    const embassyId = createShapeId(EMBASSY_ID_STRING);
+
+    const removeListener = editor.store.listen(
+      function monitorEmbassy({ changes }) {
+        Object.values(changes.added).forEach((record) => {
+          if (record.id === embassyId) {
+            setEmbassyId(embassyId);
+          }
+        });
+        Object.values(changes.removed).forEach((record) => {
+          if (record.id === embassyId) {
+            setEmbassyId(null);
+          }
+        });
+      },
+      { source: "all", scope: "document" }
+    );
+
+    return () => {
+      removeListener();
+    };
+  }, [editor]);
 
   return (
     <NpcContext.Provider

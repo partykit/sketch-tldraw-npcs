@@ -11,7 +11,7 @@ import {
 } from "@tldraw/tldraw";
 import { useNpc } from "./npc-context";
 
-const EMBASSY_ID_STRING = "embassy";
+export const EMBASSY_ID_STRING = "embassy";
 
 // barge is an equilateral triangle
 const BARGE_SIDE = 160;
@@ -36,7 +36,7 @@ export default function CreateEmbassy() {
     const id = createShapeId(EMBASSY_ID_STRING);
     // @TODO handle multiple pages
     if (editor.currentPageShapeIds.has(id)) {
-      setEmbassyId(id);
+      //setEmbassyId(id);
     }
   }, [editor]);
 
