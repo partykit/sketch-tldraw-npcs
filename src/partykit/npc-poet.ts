@@ -35,6 +35,11 @@ export type InitMessage = {
   embassyY: number;
 };
 
+export type SummonMessage = {
+  type: "summon";
+  pageId: string;
+};
+
 export type AnimateMessage = {
   type: "animate";
   x: number;
@@ -130,19 +135,35 @@ export default class NPC implements PartyServer {
 
   async onMessage(message: string | ArrayBuffer, connection: PartyConnection) {
     const msg = JSON.parse(message as string);
-    console.log("[npc] onMessage", JSON.stringify(msg, null, 2));
+    console.log(
+      "[npc] onMessage",
+      JSON.stringify(msg, null, 2),
+      "embassy",
+      JSON.stringify(this.embassy, null, 2)
+    );
     if (msg.type === "init") {
       const initMessage = msg as InitMessage;
       const { pageId, embassyX, embassyY } = initMessage;
       await this.tldraw!.summon(pageId, {
         cursor: { x: embassyX, y: embassyY },
       });
+    } else if (msg.type === "summon") {
+      const summonMessage = msg as SummonMessage;
+      const { pageId } = summonMessage;
+      if (!this.embassy) return;
+      await this.tldraw!.summon(pageId, {
+        cursor: {
+          x: this.embassy.x,
+          y: this.embassy.y,
+        },
+      });
+      this.changeState(NPCState.Idle);
     } else if (msg.type === "animate") {
       const animateMessage = msg as AnimateMessage;
       this.npcMemory = {
         ...this.npcMemory,
-        centralX: animateMessage.x,
-        centralY: animateMessage.y,
+        centralX: this.embassy!.x,
+        centralY: this.embassy!.y,
         radius: animateMessage.radius,
       };
       this.animateNpc();
@@ -170,6 +191,7 @@ export default class NPC implements PartyServer {
       await this.travel(composeMessage.x, composeMessage.y);
     } else if (msg.type === "banish") {
       this.tldraw!.banish();
+      this.changeState(NPCState.NotConnected);
     }
   }
 

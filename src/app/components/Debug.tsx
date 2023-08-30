@@ -2,6 +2,7 @@ import { useNpc } from "./npc-context";
 
 import CreateEmbassy from "./CreateEmbassy";
 import ToggleRemoteNpc from "./ToggleRemoteNpc";
+import NpcPoet from "./NpcPoet";
 
 export default function Debug() {
   const { editor, embassyId } = useNpc();
@@ -10,7 +11,8 @@ export default function Debug() {
       <h1 className="uppercase tracking-widest font-medium">Debug</h1>
       <p>Got editor: {editor === null ? "No" : "Yes"} </p>
       {!embassyId && <CreateEmbassy />}
-      <ToggleRemoteNpc />
+      {/*<ToggleRemoteNpc />*/}
+      <NpcPoet />
     </section>
   );
 }
