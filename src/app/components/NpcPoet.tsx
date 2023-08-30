@@ -37,7 +37,7 @@ function Button({
 
 export default function NpcPoet() {
   const [npcState, setNpcState] = useState<NPCState>(NPCState.NotConnected);
-  const { editor, embassyId } = useNpc();
+  const { editor, embassy } = useNpc();
 
   const socket = usePartySocket({
     host: "127.0.0.1:1999",
@@ -56,7 +56,7 @@ export default function NpcPoet() {
   });
 
   if (!editor) return null;
-  if (!embassyId) return null;
+  if (!embassy) return null;
 
   return (
     <>

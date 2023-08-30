@@ -7,7 +7,7 @@
  */
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { Editor, TLShapeId, createShapeId } from "@tldraw/tldraw";
+import { Editor, TLShapeId, TLShape, createShapeId } from "@tldraw/tldraw";
 import { getCentroidForEmbassy } from "./CreateEmbassy";
 
 import { EMBASSY_ID_STRING } from "./CreateEmbassy";
@@ -15,16 +15,14 @@ import { EMBASSY_ID_STRING } from "./CreateEmbassy";
 type NpcContextType = {
   editor: Editor | null;
   setEditor: (editor: Editor | null) => void;
-  embassyId: TLShapeId | null;
-  setEmbassyId: (embassyId: TLShapeId | null) => void;
+  embassy: TLShape | null;
   embassyCentroid: { x: number; y: number } | null;
 };
 
 const NpcContext = createContext<NpcContextType>({
   editor: null,
   setEditor: () => {},
-  embassyId: null,
-  setEmbassyId: () => {},
+  embassy: null,
   embassyCentroid: null,
 });
 
@@ -34,7 +32,7 @@ export function useNpc() {
 
 export function NpcProvider({ children }: { children: React.ReactNode }) {
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [embassyId, setEmbassyId] = useState<TLShapeId | null>(null);
+  const [embassy, setEmbassy] = useState<TLShape | null>(null);
   const [embassyCentroid, setEmbassyCentroid] = useState<{
     x: number;
     y: number;
@@ -42,28 +40,33 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!editor) return;
-    if (!embassyId) return;
-
-    const embassy = editor.getShape(embassyId);
     if (!embassy) return;
+
     const centroid = getCentroidForEmbassy(embassy);
     setEmbassyCentroid(centroid);
-  }, [embassyId, editor]);
+  }, [embassy, editor]);
 
   useEffect(() => {
     if (!editor) return;
     const embassyId = createShapeId(EMBASSY_ID_STRING);
 
+    const embassy = editor.getShape(embassyId);
+    if (embassy) {
+      setEmbassy(embassy);
+    }
+
     const removeListener = editor.store.listen(
       function monitorEmbassy({ changes }) {
         Object.values(changes.added).forEach((record) => {
           if (record.id === embassyId) {
-            setEmbassyId(embassyId);
+            setEmbassy(record as TLShape);
           }
         });
         Object.values(changes.removed).forEach((record) => {
+          console.log("removed", record.id, embassyId);
           if (record.id === embassyId) {
-            setEmbassyId(null);
+            console.log("removing...");
+            setEmbassy(null);
           }
         });
       },
@@ -80,8 +83,7 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
       value={{
         editor: editor,
         setEditor: setEditor,
-        embassyId: embassyId,
-        setEmbassyId: setEmbassyId,
+        embassy: embassy,
         embassyCentroid: embassyCentroid,
       }}
     >

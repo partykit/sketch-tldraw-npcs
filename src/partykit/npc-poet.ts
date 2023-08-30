@@ -111,8 +111,6 @@ export default class NPC implements PartyServer {
       this.doc = new Y.Doc();
       this.provider = new YProvider(host, partyId, this.doc);
       this.awareness = this.provider.awareness;
-      this.doc.on("update", this.onContentUpdate.bind(this));
-      this.awareness.on("change", this.onAwarenessUpdate.bind(this));
 
       this.tldraw = await new TldrawUtils().init(
         this.doc,
@@ -121,6 +119,10 @@ export default class NPC implements PartyServer {
         server,
         partyId
       );
+
+      await this.onContentUpdate(); // call once to init
+      this.doc.on("update", this.onContentUpdate.bind(this));
+      this.awareness.on("change", this.onAwarenessUpdate.bind(this));
     }
 
     connection.send(JSON.stringify({ type: "state", state: this.npcState }));

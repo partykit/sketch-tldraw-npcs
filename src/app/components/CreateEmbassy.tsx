@@ -28,7 +28,7 @@ export function getCentroidForEmbassy(embassy: TLShape) {
 }
 
 export default function CreateEmbassy() {
-  const { editor, embassyId, setEmbassyId } = useNpc();
+  const { editor, embassy } = useNpc();
 
   // The embassy may already exist
   useEffect(() => {
@@ -87,7 +87,6 @@ export default function CreateEmbassy() {
     // Create a group of these shapes
     const embassyId = createShapeId(EMBASSY_ID_STRING);
     editor.groupShapes([bargeId, poolId], embassyId);
-    setEmbassyId(embassyId);
 
     editor.zoomToFit();
   };
@@ -96,10 +95,10 @@ export default function CreateEmbassy() {
     <button
       onClick={() => handleCreate(editor)}
       className="w-full outline outline-1 outline-neutral-200 bg-neutral-100 hover:bg-neutral-300 disabled:bg-neutral-200 disabled:hover:bg-neutral-200 disabled:cursor-not-allowed text-neutral-500 disabled:text-neutral-400 rounded-full p-2"
-      disabled={embassyId !== null}
+      disabled={embassy !== null}
     >
       Create Embassy
-      {embassyId && (
+      {embassy && (
         <span
           className="w-5 h-5 rounded-full inline-block ml-2 flex-inline justify-center items-center"
           style={{ backgroundColor: "#d9f3d6" }}
