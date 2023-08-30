@@ -30,7 +30,7 @@ export default {
               { presence: TLInstancePresence }
             >;
             // pretty print the whole of states
-            console.log("states", JSON.stringify(Array.from(states), null, 2));
+            //console.log("states", JSON.stringify(Array.from(states), null, 2));
           } catch (e) {
             console.error(e);
           }

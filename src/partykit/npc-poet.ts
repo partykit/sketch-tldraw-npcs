@@ -6,7 +6,7 @@ import type {
   PartyConnectionContext,
 } from "partykit/server";
 
-import type { TLPageId } from "@tldraw/tldraw";
+import type { TLPageId, TLRecord, TLShape } from "@tldraw/tldraw";
 
 import * as Y from "yjs";
 import YProvider from "y-partykit/provider";
@@ -15,7 +15,7 @@ import { getChatCompletionResponse, AIMessage } from "./utils/openai";
 import TldrawUtils from "./utils/tldraw";
 
 // The NPC runs as a state machine
-enum NPCState {
+export enum NPCState {
   NotConnected,
   Idle,
 }
@@ -48,6 +48,15 @@ export type ComposeMessage = {
   y: number;
 };
 
+export type BanishMessage = {
+  type: "banish";
+};
+
+export type StateMessage = {
+  type: "state";
+  state: NPCState;
+};
+
 const AI_PROMPT: AIMessage[] = [
   {
     role: "system",
@@ -64,6 +73,8 @@ export default class NPC implements PartyServer {
   awareness: YProvider["awareness"] | undefined;
 
   tldraw: TldrawUtils | undefined;
+
+  embassy: { x: number; y: number } | undefined;
 
   npcState: NPCState = NPCState.NotConnected;
   npcMemory: NPCMemory = {} as NPCMemory;
@@ -106,6 +117,15 @@ export default class NPC implements PartyServer {
         partyId
       );
     }
+
+    connection.send(JSON.stringify({ type: "state", state: this.npcState }));
+  }
+
+  changeState(newState: NPCState) {
+    this.npcState = newState;
+    this.party.broadcast(
+      JSON.stringify({ type: "state", state: this.npcState })
+    );
   }
 
   async onMessage(message: string | ArrayBuffer, connection: PartyConnection) {
@@ -148,6 +168,8 @@ export default class NPC implements PartyServer {
         }
       );
       await this.travel(composeMessage.x, composeMessage.y);
+    } else if (msg.type === "banish") {
+      this.tldraw!.banish();
     }
   }
 
@@ -218,22 +240,20 @@ export default class NPC implements PartyServer {
     //);
   }
 
-  onContentUpdate() {
-    /*const message = this.doc?.getText("message");
-    if (!message) {
-      return;
+  async onContentUpdate() {
+    const map = this.doc?.getMap(this.tldraw!.roomId);
+    if (!map) return;
+    const { createShapeId } = await import("@tldraw/tldraw");
+    const embassyId = createShapeId("embassy");
+    const embassy = map.get(embassyId) as TLShape | undefined;
+
+    if (!embassy) {
+      this.embassy = undefined;
+    }
+    if (embassy) {
+      this.embassy = { x: embassy.x, y: embassy.y };
     }
 
-    // if the message contains the string "@npc", respond with a message
-    const text = message.toJSON();
-    if (text.includes("@npc")) {
-      setTimeout(() => {
-        const newText = `npc ${this.party.id} reporting for duty 🫡`;
-        this.doc?.transact(() => {
-          message.delete(0, message.length);
-          message.insert(0, newText);
-        });
-      }, 500);
-    }*/
+    //console.log("[npc] onContentUpdate", JSON.stringify(this.embassy, null, 2));
   }
 }

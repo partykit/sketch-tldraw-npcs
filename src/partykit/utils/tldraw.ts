@@ -45,6 +45,11 @@ export default class TldrawUtils {
     await this.updatePresence(presenceFields);
   }
 
+  banish() {
+    this.awareness?.setLocalState(null);
+    this.pageId = undefined;
+  }
+
   async getPresence() {
     return (
       this.awareness?.getStates()?.get(this.clientId!)?.presence ??
