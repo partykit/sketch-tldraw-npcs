@@ -84,7 +84,7 @@ export default function NpcPoet() {
               );
             }}
           >
-            Compose
+            Compose a haiku
           </Button>
         </>
       )}
