@@ -42,43 +42,52 @@ export default function NpcPoet() {
         Poet
       </div>
 
-      <Button
-        bgColor="bg-lime-200"
-        bgColorHover="hover:bg-lime-300"
-        onClick={() => {
-          socket.send(
-            JSON.stringify({
-              type: "summon",
-              pageId: editor.currentPageId,
-            } as SummonMessage)
-          );
-        }}
-        disabled={npcState !== NPCState.NotConnected}
-      >
-        Summon
-      </Button>
-      <Button
-        bgColor="bg-lime-200"
-        bgColorHover="hover:bg-lime-300"
-        onClick={() => {
-          socket.send(
-            JSON.stringify({ type: "animate", radius: 50 } as AnimateMessage)
-          );
-        }}
-        disabled={npcState === NPCState.NotConnected}
-      >
-        Circle
-      </Button>
-      <Button
-        bgColor="bg-lime-200"
-        bgColorHover="hover:bg-lime-300"
-        onClick={() => {
-          socket.send(JSON.stringify({ type: "compose" } as ComposeMessage));
-        }}
-        disabled={npcState === NPCState.NotConnected}
-      >
-        Compose
-      </Button>
+      {npcState === NPCState.NotConnected && (
+        <Button
+          bgColor="bg-lime-200"
+          bgColorHover="hover:bg-lime-300"
+          onClick={() => {
+            socket.send(
+              JSON.stringify({
+                type: "summon",
+                pageId: editor.currentPageId,
+              } as SummonMessage)
+            );
+          }}
+          disabled={npcState !== NPCState.NotConnected}
+        >
+          Summon
+        </Button>
+      )}
+      {npcState !== NPCState.NotConnected && (
+        <>
+          <Button
+            bgColor="bg-lime-200"
+            bgColorHover="hover:bg-lime-300"
+            onClick={() => {
+              socket.send(
+                JSON.stringify({
+                  type: "animate",
+                  radius: 50,
+                } as AnimateMessage)
+              );
+            }}
+          >
+            Circle
+          </Button>
+          <Button
+            bgColor="bg-lime-200"
+            bgColorHover="hover:bg-lime-300"
+            onClick={() => {
+              socket.send(
+                JSON.stringify({ type: "compose" } as ComposeMessage)
+              );
+            }}
+          >
+            Compose
+          </Button>
+        </>
+      )}
     </div>
   );
 }

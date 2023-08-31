@@ -2,7 +2,7 @@ import NPC, { NPCState } from "./utils/npc";
 
 import type { PartyConnection } from "partykit/server";
 
-import type { TLShape } from "@tldraw/tldraw";
+import type { TLShape, TLShapeProps } from "@tldraw/tldraw";
 
 import * as Y from "yjs";
 
@@ -23,8 +23,9 @@ export default class NPCPainter extends NPC {
     } else if (msg.type === "paint") {
       if (!this.npcMemory.star) return;
       this.tldraw!.updateShape(this.npcMemory.star, {
-        props: { fill: "pattern", color: "yellow" },
+        props: { fill: "pattern", color: "light-red" },
       });
+      this.tldraw!.updatePresence({ chatMessage: "Painter" });
       await this.travel(this.embassy!.x, this.embassy!.y);
       this.changeState(NPCState.Idle);
     }
@@ -38,12 +39,13 @@ export default class NPCPainter extends NPC {
     // Characteristics: parentId == this.tldraw.pageId, typeName == "shape", props.geo == "star"
     map.forEach(async (value: unknown, id: string, map: Y.Map<unknown>) => {
       const record = value as TLShape;
+      const props = record.props as TLShapeProps;
       if (
         record.typeName === "shape" &&
         record.parentId === this.tldraw!.pageId &&
-        (record.props as any).geo === "star" &&
-        (record.props as any).fill !== "pattern" &&
-        (record.props as any).color !== "yellow"
+        props.geo === "star" &&
+        props.fill !== "pattern" &&
+        props.color !== "light-red"
       ) {
         await this.onNewStarShape(record);
       }
@@ -54,8 +56,11 @@ export default class NPCPainter extends NPC {
   }
 
   async onNewStarShape(shape: TLShape) {
-    await this.travel(shape.x, shape.y);
+    const x = shape.x + (shape.props as TLShapeProps).w / 2;
+    const y = shape.y + (shape.props as TLShapeProps).h / 2;
+    await this.travel(x, y);
     this.npcMemory["star"] = shape;
+    this.tldraw!.updatePresence({ chatMessage: "Let me help" });
     this.changeState(NPCState.Painting);
   }
 }

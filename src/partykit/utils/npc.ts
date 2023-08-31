@@ -109,8 +109,8 @@ export default class NPC implements PartyServer {
       if (!this.embassy) return;
       await this.tldraw!.summon(pageId, {
         cursor: {
-          x: this.embassy.x + Math.random() * 100 - 50,
-          y: this.embassy.y + Math.random() * 100 - 50,
+          x: this.embassy.x + Math.random() * 70 - 35,
+          y: this.embassy.y + Math.random() * 70 - 35,
         },
       });
       this.changeState(NPCState.Idle);

@@ -34,33 +34,37 @@ export default function NpcPainter() {
   return (
     <div className="flex flex-col w-full justify-item items-start">
       <div className="w-full text-center text-xs text-neutral-500 uppercase tracking-widest font-semibold py-2 font-mono">
-        Painter
+        It paints stars
       </div>
-      <Button
-        bgColor="bg-pink-200"
-        bgColorHover="hover:bg-pink-300"
-        onClick={() => {
-          socket.send(
-            JSON.stringify({
-              type: "summon",
-              pageId: editor.currentPageId,
-            } as SummonMessage)
-          );
-        }}
-        disabled={npcState !== NPCState.NotConnected}
-      >
-        Summon
-      </Button>
-      <Button
-        bgColor="bg-pink-200"
-        bgColorHover="hover:bg-pink-300"
-        onClick={() => {
-          socket.send(JSON.stringify({ type: "paint" }));
-        }}
-        disabled={npcState !== NPCState.Painting}
-      >
-        Paint?
-      </Button>
+      {npcState === NPCState.NotConnected && (
+        <Button
+          bgColor="bg-pink-200"
+          bgColorHover="hover:bg-pink-300"
+          onClick={() => {
+            socket.send(
+              JSON.stringify({
+                type: "summon",
+                pageId: editor.currentPageId,
+              } as SummonMessage)
+            );
+          }}
+          disabled={npcState !== NPCState.NotConnected}
+        >
+          Summon
+        </Button>
+      )}
+      {npcState !== NPCState.NotConnected && (
+        <Button
+          bgColor="bg-pink-200"
+          bgColorHover="hover:bg-pink-300"
+          onClick={() => {
+            socket.send(JSON.stringify({ type: "paint" }));
+          }}
+          disabled={npcState !== NPCState.Painting}
+        >
+          I can paint that!
+        </Button>
+      )}
     </div>
   );
 }
