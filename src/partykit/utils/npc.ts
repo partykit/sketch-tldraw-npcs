@@ -132,10 +132,12 @@ export default class NPC implements PartyServer {
       if (distance < CURSOR_SPEED * 5) {
         return false;
       }
+
+      const speed = Math.max(distance / 10, CURSOR_SPEED);
       // Otherwise, move towards the target
       const angle = Math.atan2(y - currentY, x - currentX);
-      const newX = currentX + CURSOR_SPEED * Math.cos(angle);
-      const newY = currentY + CURSOR_SPEED * Math.sin(angle);
+      const newX = currentX + speed * Math.cos(angle);
+      const newY = currentY + speed * Math.sin(angle);
       await this.tldraw!.updatePresence({ cursor: { x: newX, y: newY } });
       return true;
     };
@@ -147,6 +149,11 @@ export default class NPC implements PartyServer {
         clearInterval(interval);
       }
     }, 10);
+
+    // Time out after 3 seconds anyway
+    setTimeout(() => {
+      clearInterval(interval);
+    }, 3000);
   }
 
   onAwarenessUpdate() {
@@ -168,6 +175,9 @@ export default class NPC implements PartyServer {
     }
     if (embassy) {
       this.embassy = getCentroidForEmbassy(embassy);
+      if (this.npcState !== NPCState.NotConnected) {
+        this.travel(this.embassy.x, this.embassy.y);
+      }
     }
 
     return map; // so that subclasses can use it

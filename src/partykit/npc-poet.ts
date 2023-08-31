@@ -64,8 +64,8 @@ export default class NPCPoet extends NPC {
       const originX = this.embassy!.x;
       const originY = this.embassy!.y;
       const angle = Math.random() * 2 * Math.PI;
-      const x = originX + 300 * Math.cos(angle);
-      const y = originY + 300 * Math.sin(angle);
+      const x = originX + 500 * Math.cos(angle);
+      const y = originY + 500 * Math.sin(angle);
       await this.travel(x, y);
       const blankTextShape = await this.tldraw?.makeTextShape(x, y);
       let poem = "";
@@ -95,7 +95,7 @@ export default class NPCPoet extends NPC {
 
   animateNpc() {
     this.npcMemory.startTime = Date.now();
-    const MOVING_CURSOR_SPEED = 0.3;
+    const MOVING_CURSOR_SPEED = 0.5;
 
     // Make a function to update the localStateField. We'll call this every 10ms
     const updatePosition = async () => {
@@ -120,6 +120,6 @@ export default class NPCPoet extends NPC {
 
     setTimeout(() => {
       clearInterval(interval);
-    }, 5000);
+    }, 3000);
   }
 }
