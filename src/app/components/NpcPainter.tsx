@@ -33,8 +33,8 @@ export default function NpcPainter() {
 
   return (
     <>
-      <div className="text-sm text-neutral-500 uppercase tracking-wider font-semibold">
-        Poet
+      <div className="w-full text-center text-xs text-neutral-500 uppercase tracking-widest font-semibold">
+        Painter
       </div>
       <Button
         onClick={() => {

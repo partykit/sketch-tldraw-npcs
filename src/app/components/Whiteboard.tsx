@@ -34,7 +34,7 @@ export default function APIExample() {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div className="tldraw__editor">
       <Tldraw store={store} onMount={handleMount}>
         <InsideOfEditorContext />
       </Tldraw>

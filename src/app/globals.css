@@ -1,10 +1,9 @@
-@tailwind base;
+/*@tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities;*/
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
-/*
 html,
 body {
 	padding: 0;
@@ -14,7 +13,7 @@ body {
 	touch-action: none;
 	min-height: 100vh;
 	font-size: 16px;
-	/* mobile viewport bug fix /
+	/* mobile viewport bug fix */
 	min-height: -webkit-fill-available;
 	height: 100%;
 }
@@ -29,4 +28,3 @@ html,
 	inset: 0px;
 	overflow: hidden;
 }
-*/

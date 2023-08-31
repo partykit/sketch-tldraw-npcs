@@ -38,8 +38,8 @@ export default function NpcPoet() {
 
   return (
     <>
-      <div className="text-sm text-neutral-500 uppercase tracking-wider font-semibold">
-        Painter
+      <div className="w-full text-center text-xs text-neutral-500 uppercase tracking-widest font-semibold">
+        Poet
       </div>
 
       <Button

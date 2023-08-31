@@ -4,7 +4,7 @@ import Whiteboard from "@/app/components/Whiteboard";
 import Debug from "@/app/components/Debug";
 import { NpcProvider } from "@/app/components/npc-context";
 
-export default function Home() {
+/*export default function Home() {
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-between p-6 bg-neutral-200 gap-4">
       <h1 className="text-4xl font-bold">Hello, Dolphin 🐬</h1>
@@ -19,5 +19,14 @@ export default function Home() {
         </NpcProvider>
       </div>
     </main>
+  );
+}*/
+
+export default function Home() {
+  return (
+    <NpcProvider>
+      <Whiteboard />
+      <Debug />
+    </NpcProvider>
   );
 }
