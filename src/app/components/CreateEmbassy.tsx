@@ -1,15 +1,8 @@
-import { useEffect, useState } from "react";
-import {
-  DefaultColorStyle,
-  Editor,
-  TLGeoShape,
-  TLShapePartial,
-  TLShape,
-  Tldraw,
-  createShapeId,
-  useEditor,
-} from "@tldraw/tldraw";
+import { useEffect } from "react";
+import { Editor, TLGeoShape, createShapeId } from "@tldraw/tldraw";
 import { useNpc } from "./npc-context";
+
+import Button from "./Button";
 
 import { BARGE_SIDE, BARGE_HEIGHT, POOL_RADIUS } from "@/shared/embassy";
 
@@ -79,21 +72,11 @@ export default function CreateEmbassy() {
     editor.zoomToFit();
   };
 
+  if (embassy) return;
+
   return (
-    <button
-      onClick={() => handleCreate(editor)}
-      className="w-full outline outline-1 outline-neutral-200 bg-neutral-100 hover:bg-neutral-300 disabled:bg-neutral-200 disabled:hover:bg-neutral-200 disabled:cursor-not-allowed text-neutral-500 disabled:text-neutral-400 rounded-full p-2"
-      disabled={embassy !== null}
-    >
+    <Button onClick={() => handleCreate(editor)} disabled={embassy !== null}>
       Create Embassy
-      {embassy && (
-        <span
-          className="w-5 h-5 rounded-full inline-block ml-2 flex-inline justify-center items-center"
-          style={{ backgroundColor: "#d9f3d6" }}
-        >
-          ✓
-        </span>
-      )}
-    </button>
+    </Button>
   );
 }

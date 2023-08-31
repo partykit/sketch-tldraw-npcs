@@ -32,8 +32,8 @@ export default function NpcPainter() {
   if (!embassy) return null;
 
   return (
-    <>
-      <div className="w-full text-center text-xs text-neutral-500 uppercase tracking-widest font-semibold">
+    <div className="flex flex-col w-full justify-item items-start">
+      <div className="w-full text-center text-xs text-neutral-500 uppercase tracking-widest font-semibold py-2 font-mono">
         Painter
       </div>
       <Button
@@ -57,6 +57,6 @@ export default function NpcPainter() {
       >
         Paint?
       </Button>
-    </>
+    </div>
   );
 }

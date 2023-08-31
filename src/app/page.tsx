@@ -1,7 +1,7 @@
 "use client";
 
 import Whiteboard from "@/app/components/Whiteboard";
-import Debug from "@/app/components/Debug";
+import WalkieTalkie from "@/app/components/WalkieTalkie";
 import { NpcProvider } from "@/app/components/npc-context";
 
 /*export default function Home() {
@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <NpcProvider>
       <Whiteboard />
-      <Debug />
+      <WalkieTalkie />
     </NpcProvider>
   );
 }
