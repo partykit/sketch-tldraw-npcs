@@ -2,6 +2,7 @@ import { useNpc } from "./npc-context";
 
 import CreateEmbassy from "./CreateEmbassy";
 import NpcPoet from "./NpcPoet";
+import NpcPainter from "./NpcPainter";
 
 export default function Debug() {
   const { editor, embassy } = useNpc();
@@ -11,6 +12,7 @@ export default function Debug() {
       <p>Got editor: {editor === null ? "No" : "Yes"} </p>
       {!embassy && <CreateEmbassy />}
       <NpcPoet />
+      <NpcPainter />
     </section>
   );
 }

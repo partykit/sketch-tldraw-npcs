@@ -2,7 +2,8 @@
     "main": "src/partykit/server.ts",
     "name": "whiteboard",
     "parties": {
-        "npcPoet": "src/partykit/npc-poet.ts"
+        "npcPoet": "src/partykit/npc-poet.ts",
+        "npcPainter": "src/partykit/npc-painter.ts"
     },
     "persist": false
 }

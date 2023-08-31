@@ -1,24 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import usePartySocket from "partysocket/react";
 import { useNpc } from "./npc-context";
 
-import type { AnimateMessage, ComposeMessage } from "@/partykit/npc-poet";
-import type {
-  SummonMessage,
-  BanishMessage,
-  StateMessage,
-} from "@/partykit/utils/npc";
+import type { SummonMessage, StateMessage } from "@/partykit/utils/npc";
 import { NPCState } from "@/partykit/utils/npc";
 
 import Button from "./Button";
 
-export default function NpcPoet() {
+export default function NpcPainter() {
   const [npcState, setNpcState] = useState<NPCState>(NPCState.NotConnected);
   const { editor, embassy } = useNpc();
 
   const socket = usePartySocket({
     host: "127.0.0.1:1999",
-    party: "npcPoet",
+    party: "npcPainter",
     room: "dolphin-example",
     //startClosed: true,
     onMessage: (message) => {
@@ -39,9 +34,8 @@ export default function NpcPoet() {
   return (
     <>
       <div className="text-sm text-neutral-500 uppercase tracking-wider font-semibold">
-        Painter
+        Poet
       </div>
-
       <Button
         onClick={() => {
           socket.send(
@@ -57,21 +51,11 @@ export default function NpcPoet() {
       </Button>
       <Button
         onClick={() => {
-          socket.send(
-            JSON.stringify({ type: "animate", radius: 50 } as AnimateMessage)
-          );
+          socket.send(JSON.stringify({ type: "paint" }));
         }}
-        disabled={npcState === NPCState.NotConnected}
+        disabled={npcState !== NPCState.Painting}
       >
-        Circle
-      </Button>
-      <Button
-        onClick={() => {
-          socket.send(JSON.stringify({ type: "compose" } as ComposeMessage));
-        }}
-        disabled={npcState === NPCState.NotConnected}
-      >
-        Compose
+        Paint?
       </Button>
     </>
   );
