@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import usePartySocket from "partysocket/react";
 import { useNpc } from "./npc-context";
 
+import type { AnimateMessage, ComposeMessage } from "@/partykit/npc-poet";
 import type {
   SummonMessage,
-  AnimateMessage,
-  ComposeMessage,
   BanishMessage,
   StateMessage,
-} from "@/partykit/npc-poet";
-import { NPCState } from "@/partykit/npc-poet";
+} from "@/partykit/utils/npc";
+import { NPCState } from "@/partykit/utils/npc";
 
 function Button({
   onClick,
@@ -48,8 +47,9 @@ export default function NpcPoet() {
       const msg = JSON.parse(message.data);
       switch (msg.type) {
         case "state":
+          const stateMessage = msg as StateMessage;
           console.log("Got state message", JSON.stringify(msg, null, 2));
-          setNpcState(msg.state as NPCState);
+          setNpcState(stateMessage.state as NPCState);
           break;
       }
     },
