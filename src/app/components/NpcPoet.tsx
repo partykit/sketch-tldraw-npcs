@@ -43,6 +43,8 @@ export default function NpcPoet() {
       </div>
 
       <Button
+        bgColor="bg-lime-200"
+        bgColorHover="hover:bg-lime-300"
         onClick={() => {
           socket.send(
             JSON.stringify({
@@ -56,6 +58,8 @@ export default function NpcPoet() {
         Summon
       </Button>
       <Button
+        bgColor="bg-lime-200"
+        bgColorHover="hover:bg-lime-300"
         onClick={() => {
           socket.send(
             JSON.stringify({ type: "animate", radius: 50 } as AnimateMessage)
@@ -66,6 +70,8 @@ export default function NpcPoet() {
         Circle
       </Button>
       <Button
+        bgColor="bg-lime-200"
+        bgColorHover="hover:bg-lime-300"
         onClick={() => {
           socket.send(JSON.stringify({ type: "compose" } as ComposeMessage));
         }}

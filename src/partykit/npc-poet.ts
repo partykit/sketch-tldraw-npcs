@@ -46,7 +46,9 @@ export default class NPCPoet extends NPC {
 
     const msg = JSON.parse(message as string);
 
-    if (msg.type === "animate") {
+    if (msg.type === "summon") {
+      this.tldraw!.updatePresence({ color: "#84cc16", chatMessage: "Poet" });
+    } else if (msg.type === "animate") {
       const animateMessage = msg as AnimateMessage;
       this.npcMemory = {
         ...this.npcMemory,
@@ -71,11 +73,15 @@ export default class NPCPoet extends NPC {
         this.party.env,
         AI_PROMPT,
         async () => {
-          this.tldraw!.updateShape(blankTextShape!);
+          this.tldraw!.updateShape(blankTextShape!, {
+            props: { color: "green" },
+          });
         },
         async (token) => {
           poem += token;
-          this.tldraw!.updateShape(blankTextShape!, { props: { text: poem } });
+          this.tldraw!.updateShape(blankTextShape!, {
+            props: { text: poem, color: "green" },
+          });
         }
       );
       await this.travel(originX, originY);

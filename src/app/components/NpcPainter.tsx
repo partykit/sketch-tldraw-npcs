@@ -37,6 +37,8 @@ export default function NpcPainter() {
         Painter
       </div>
       <Button
+        bgColor="bg-pink-200"
+        bgColorHover="hover:bg-pink-300"
         onClick={() => {
           socket.send(
             JSON.stringify({
@@ -50,6 +52,8 @@ export default function NpcPainter() {
         Summon
       </Button>
       <Button
+        bgColor="bg-pink-200"
+        bgColorHover="hover:bg-pink-300"
         onClick={() => {
           socket.send(JSON.stringify({ type: "paint" }));
         }}

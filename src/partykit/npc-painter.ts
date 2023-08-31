@@ -18,7 +18,9 @@ export default class NPCPainter extends NPC {
 
     const msg = JSON.parse(message as string);
 
-    if (msg.type === "paint") {
+    if (msg.type === "summon") {
+      this.tldraw!.updatePresence({ color: "#ec4899", chatMessage: "Painter" });
+    } else if (msg.type === "paint") {
       if (!this.npcMemory.star) return;
       this.tldraw!.updateShape(this.npcMemory.star, {
         props: { fill: "pattern", color: "yellow" },
