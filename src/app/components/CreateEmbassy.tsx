@@ -78,7 +78,7 @@ export default function CreateEmbassy() {
 
   return (
     <Button onClick={() => handleCreate(editor)} disabled={embassy !== null}>
-      Create Embassy
+      Build Embassy
     </Button>
   );
 }

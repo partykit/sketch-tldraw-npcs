@@ -39,7 +39,7 @@ export default function NpcPoet() {
   return (
     <div className="flex flex-col w-full justify-item items-start">
       <div className="w-full text-center text-xs text-neutral-500 uppercase tracking-widest font-semibold py-2 font-mono">
-        Poet
+        It makes poems
       </div>
 
       {npcState === NPCState.NotConnected && (

@@ -74,13 +74,18 @@ export default class NPCPoet extends NPC {
         AI_PROMPT,
         async () => {
           this.tldraw!.updateShape(blankTextShape!, {
-            props: { color: "green" },
+            props: { color: "green", font: "serif", align: "start" },
           });
         },
         async (token) => {
           poem += token;
           this.tldraw!.updateShape(blankTextShape!, {
-            props: { text: poem, color: "green" },
+            props: {
+              text: poem,
+              color: "green",
+              font: "serif",
+              align: "start",
+            },
           });
         }
       );
