@@ -1,34 +1,27 @@
-import {
-  ChatCompletionRequestMessage,
-  Configuration,
-  OpenAIApi,
-} from "openai-edge";
+import OpenAI from "openai";
 import { OpenAIStream } from "ai";
-
-export type AIMessage = ChatCompletionRequestMessage;
 
 export async function getChatCompletionResponse(
   env: Record<string, any>,
-  chain: ChatCompletionRequestMessage[],
+  chain: {
+    role: "function" | "system" | "user" | "assistant";
+    content: string | null;
+  }[],
   onStartCallback: () => void,
   onTokenCallback: (token: string) => void
 ) {
-  const openai = new OpenAIApi(
-    new Configuration({
-      organization: env.OPENAI_API_ORGANIZATION,
-      apiKey: env.OPENAI_API_KEY,
-    })
-  );
-
-  const prompt = chain.map((message) => {
-    return { role: message.role, content: message.content };
+  const openai = new OpenAI({
+    organization: env.OPENAI_API_ORGANIZATION,
+    apiKey: env.OPENAI_API_KEY,
   });
 
-  const openaiResponse = await openai.createChatCompletion({
+  const params: OpenAI.Chat.ChatCompletionCreateParams = {
     model: "gpt-3.5-turbo",
     stream: true,
-    messages: prompt,
-  });
+    messages: chain,
+  };
+
+  const openaiResponse = await openai.chat.completions.create(params);
 
   const stream = OpenAIStream(openaiResponse, {
     onStart: async () => onStartCallback(),

@@ -64,32 +64,39 @@ export default class NPCPoet extends NPC {
       const originX = this.embassy!.x;
       const originY = this.embassy!.y;
       const angle = Math.random() * 2 * Math.PI;
-      const x = originX + 500 * Math.cos(angle);
-      const y = originY + 500 * Math.sin(angle);
-      await this.travel(x, y);
+      const x = originX + 400 * Math.cos(angle);
+      const y = originY + 400 * Math.sin(angle);
       const blankTextShape = await this.tldraw?.makeTextShape(x, y);
       let poem = "";
-      await getChatCompletionResponse(
-        this.party.env,
-        AI_PROMPT,
-        async () => {
-          this.tldraw!.updateShape(blankTextShape!, {
-            props: { color: "green", font: "serif", align: "start" },
-          });
-        },
-        async (token) => {
-          poem += token;
-          this.tldraw!.updateShape(blankTextShape!, {
-            props: {
-              text: poem,
-              color: "green",
-              font: "serif",
-              align: "start",
+
+      const sequence = [
+        () => this.travel(x, y),
+        () =>
+          getChatCompletionResponse(
+            this.party.env,
+            AI_PROMPT,
+            async () => {
+              this.tldraw!.updateShape(blankTextShape!, {
+                props: { color: "green", font: "serif", align: "start" },
+              });
             },
-          });
-        }
-      );
-      await this.travel(originX, originY);
+            async (token) => {
+              poem += token;
+              this.tldraw!.updateShape(blankTextShape!, {
+                props: {
+                  text: poem,
+                  color: "green",
+                  font: "serif",
+                  align: "start",
+                },
+              });
+            }
+          ),
+        () => this.travel(originX, originY),
+      ];
+      for (const step of sequence) {
+        await step();
+      }
     }
   }
 

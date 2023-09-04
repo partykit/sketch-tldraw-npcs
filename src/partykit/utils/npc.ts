@@ -129,11 +129,14 @@ export default class NPC implements PartyServer {
       // Get the distance between the current position and the target position
       const distance = Math.sqrt((currentX - x) ** 2 + (currentY - y) ** 2);
       // If it's less than the speed, we're done
-      if (distance < CURSOR_SPEED * 5) {
+      if (distance < CURSOR_SPEED * 6) {
         return false;
       }
 
-      const speed = Math.max(distance / 10, CURSOR_SPEED);
+      const speed = Math.max(
+        CURSOR_SPEED * 5,
+        Math.max(CURSOR_SPEED, distance / 20)
+      );
       // Otherwise, move towards the target
       const angle = Math.atan2(y - currentY, x - currentX);
       const newX = currentX + speed * Math.cos(angle);
@@ -145,6 +148,7 @@ export default class NPC implements PartyServer {
     // Call updatePosition every 10ms until it returns false
     const interval = setInterval(async () => {
       const keepGoing = await updatePosition();
+      //console.log("keepGoing", keepGoing);
       if (!keepGoing) {
         clearInterval(interval);
       }
@@ -153,7 +157,7 @@ export default class NPC implements PartyServer {
     // Time out after 3 seconds anyway
     setTimeout(() => {
       clearInterval(interval);
-    }, 3000);
+    }, 1000);
   }
 
   onAwarenessUpdate() {
@@ -171,11 +175,13 @@ export default class NPC implements PartyServer {
     const embassy = map.get(embassyId) as TLShape | undefined;
 
     if (!embassy) {
-      this.embassy = undefined;
+      if (this.embassy) {
+        this.embassy = undefined;
+      }
     }
     if (embassy) {
       this.embassy = getCentroidForEmbassy(embassy);
-      if (this.npcState !== NPCState.NotConnected) {
+      if (this.npcState === NPCState.Idle) {
         this.travel(this.embassy.x, this.embassy.y);
       }
     }

@@ -46,7 +46,8 @@ export default class TldrawUtils {
   }
 
   banish() {
-    this.awareness?.setLocalState(null);
+    //this.awareness?.setLocalState(null);
+    this.awareness?.setLocalStateField("presence", {});
     this.pageId = undefined;
   }
 

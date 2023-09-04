@@ -27,10 +27,10 @@ export default function APIExample() {
   const handleMount = (editor: Editor) => {
     setEditor(editor);
     // Can update a chatMessage on self, but it won't appear to self
-    editor.updateInstanceState({
+    /*editor.updateInstanceState({
       chatMessage: "HELLO WORLD",
       isChatting: true,
-    });
+    });*/
   };
 
   return (
