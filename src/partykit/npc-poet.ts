@@ -1,15 +1,12 @@
-import NPC, { NPCState } from "./utils/npc";
+import NPC from "./utils/npc";
 
 import type { PartyConnection } from "partykit/server";
 
 import type { TLShape } from "@tldraw/tldraw";
 
-import * as Y from "yjs";
-
 import { getChatCompletionResponse, AIMessage } from "./utils/openai";
 
 type NPCMemory = {
-  pageId: string;
   centralX: number;
   centralY: number;
   radius: number;
@@ -72,15 +69,15 @@ export default class NPCPoet extends NPC {
       const sequence = [
         () => this.travel(x, y),
         () =>
-          getChatCompletionResponse(
-            this.party.env,
-            AI_PROMPT,
-            async () => {
+          getChatCompletionResponse({
+            env: this.party.env,
+            messages: AI_PROMPT,
+            onStartCallback: async () => {
               this.tldraw!.updateShape(blankTextShape!, {
                 props: { color: "green", font: "serif", align: "start" },
               });
             },
-            async (token) => {
+            onTokenCallback: async (token) => {
               poem += token;
               this.tldraw!.updateShape(blankTextShape!, {
                 props: {
@@ -90,8 +87,8 @@ export default class NPCPoet extends NPC {
                   align: "start",
                 },
               });
-            }
-          ),
+            },
+          }),
         () => this.travel(originX, originY),
       ];
       for (const step of sequence) {
