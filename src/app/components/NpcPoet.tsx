@@ -17,7 +17,7 @@ export default function NpcPoet() {
   const { editor, embassy } = useNpc();
 
   const socket = usePartySocket({
-    host: "127.0.0.1:1999",
+    host: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
     party: "npcPoet",
     room: "dolphin-example",
     //startClosed: true,

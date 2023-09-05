@@ -17,7 +17,7 @@ export default function NpcMakerDrawButton({
     if (showBoxesPromptInput) {
       promptInputRef.current.focus();
     }
-  }, [showBoxesPromptInput, promptInputRef.current]);
+  }, [showBoxesPromptInput, promptInputRef]);
 
   // When the textarea is visible, hitting 'escape' will hide it, and hitting enter will submit
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

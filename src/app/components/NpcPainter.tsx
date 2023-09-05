@@ -12,7 +12,7 @@ export default function NpcPainter() {
   const { editor, embassy } = useNpc();
 
   const socket = usePartySocket({
-    host: "127.0.0.1:1999",
+    host: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
     party: "npcPainter",
     room: "dolphin-example",
     //startClosed: true,

@@ -29,8 +29,11 @@ export async function getChatCompletionResponse(params: Params) {
   const openaiResponse = await openai.chat.completions.create(openAIParams);
 
   async function onFunctionCall(
-    { name, arguments: args },
-    createFunctionCallMessages
+    {
+      name,
+      arguments: args,
+    }: { name: string; arguments: Record<string, unknown> },
+    createFunctionCallMessages: any
   ) {
     // if you skip the function call and return nothing, the `function_call`
     // message will be sent to the client for it to handle

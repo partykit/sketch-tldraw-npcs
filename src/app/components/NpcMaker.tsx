@@ -13,7 +13,7 @@ export default function NpcMaker() {
   const { editor, embassy } = useNpc();
 
   const socket = usePartySocket({
-    host: "127.0.0.1:1999",
+    host: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
     party: "npcMaker",
     room: "dolphin-example",
     //startClosed: true,
