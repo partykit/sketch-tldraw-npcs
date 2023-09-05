@@ -22,7 +22,7 @@ import * as Y from "yjs";
 
 export function useYjsStore({
   roomId = "example",
-  hostUrl = "ws://127.0.0.1:1999/party",
+  hostUrl = "127.0.0.1:1999",
   /*import.meta.env.MODE === "development"
     ? "ws://localhost:1234"
     : "wss://demos.yjs.dev",*/
@@ -45,7 +45,7 @@ export function useYjsStore({
     return {
       doc,
       //room: new WebsocketProvider(hostUrl, roomId, doc, { connect: true }),
-      room: new YPartyKitProvider("127.0.0.1:1999", roomId, doc, {
+      room: new YPartyKitProvider(hostUrl, roomId, doc, {
         connect: true,
       }),
       yRecords: doc.getMap<TLRecord>(`tl_${roomId}`),
