@@ -1,3 +1,5 @@
+"use client";
+
 import "./walkie-talkie.styles.css";
 
 import { useNpc } from "./npc-context";

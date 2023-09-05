@@ -10,6 +10,7 @@ type Params = {
   functions?: any[];
   onStartCallback: () => void;
   onTokenCallback: (token: string) => void;
+  onFunctionCall?: (name: string, args: any) => object;
 };
 
 export async function getChatCompletionResponse(params: Params) {
@@ -25,12 +26,35 @@ export async function getChatCompletionResponse(params: Params) {
     messages,
     functions,
   };
-  console.log(JSON.stringify(openAIParams, null, 2));
   const openaiResponse = await openai.chat.completions.create(openAIParams);
-  console.log("openaiResponse", openaiResponse);
+
+  async function onFunctionCall(
+    { name, arguments: args },
+    createFunctionCallMessages
+  ) {
+    // if you skip the function call and return nothing, the `function_call`
+    // message will be sent to the client for it to handle
+    console.log("onFunctionCall", name, JSON.stringify(args));
+    const dataResponse = params.onFunctionCall!(name, args);
+    console.log("dataResponse", JSON.stringify(dataResponse, null, 2));
+    // `createFunctionCallMessages` constructs the relevant "assistant" and "function" messages for you
+    const newMessages = await createFunctionCallMessages(dataResponse);
+    return openai.chat.completions.create({
+      messages: [...messages, ...newMessages],
+      stream: true,
+      model: "gpt-3.5-turbo-0613",
+      // see "Recursive Function Calls" below
+      functions,
+    });
+  }
+
   const stream = OpenAIStream(openaiResponse, {
     onStart: async () => onStartCallback(),
     onToken: async (token) => onTokenCallback(token),
+    experimental_onFunctionCall: params.onFunctionCall
+      ? async ({ name, arguments: args }, createFunctionCallMessages) =>
+          onFunctionCall({ name, arguments: args }, createFunctionCallMessages)
+      : undefined,
   });
 
   // @ts-ignore

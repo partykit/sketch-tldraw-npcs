@@ -6,6 +6,7 @@ import type { SummonMessage, StateMessage } from "@/partykit/utils/npc";
 import { NPCState } from "@/partykit/utils/npc";
 
 import Button from "./Button";
+import NpcMakerDrawButton from "./NpcMakerDrawButton";
 
 export default function NpcMaker() {
   const [npcState, setNpcState] = useState<NPCState>(NPCState.NotConnected);
@@ -31,6 +32,15 @@ export default function NpcMaker() {
   if (!editor) return null;
   if (!embassy) return null;
 
+  const submitPrompt = (prompt: string) => {
+    socket.send(
+      JSON.stringify({
+        type: "boxes",
+        prompt,
+      })
+    );
+  };
+
   return (
     <div className="flex flex-col w-full justify-item items-start">
       <div className="w-full text-center text-xs text-neutral-500 uppercase tracking-widest font-semibold py-2 font-mono">
@@ -54,15 +64,7 @@ export default function NpcMaker() {
         </Button>
       )}
       {npcState !== NPCState.NotConnected && (
-        <Button
-          bgColor="bg-cyan-200"
-          bgColorHover="hover:bg-cyan-300"
-          onClick={() => {
-            socket.send(JSON.stringify({ type: "boxes" }));
-          }}
-        >
-          Draw boxes
-        </Button>
+        <NpcMakerDrawButton submitPrompt={submitPrompt} />
       )}
     </div>
   );

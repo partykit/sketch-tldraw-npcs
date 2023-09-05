@@ -19,6 +19,7 @@ export enum NPCState {
   NotConnected,
   Idle,
   Painting,
+  Making,
 }
 
 export type SummonMessage = {
@@ -120,44 +121,58 @@ export default class NPC implements PartyServer {
     }
   }
 
-  async travel(x: number, y: number) {
+  async updatePosition(targetX: number, targetY: number) {
     const CURSOR_SPEED = 3;
 
-    const updatePosition = async () => {
-      const currentPresence = await this.tldraw!.getPresence();
-      const { x: currentX, y: currentY } = currentPresence.cursor;
-      // Get the distance between the current position and the target position
-      const distance = Math.sqrt((currentX - x) ** 2 + (currentY - y) ** 2);
-      // If it's less than the speed, we're done
-      if (distance < CURSOR_SPEED * 6) {
-        return false;
-      }
+    const currentPresence = await this.tldraw!.getPresence();
+    const { x: currentX, y: currentY } = currentPresence.cursor;
+    // Get the distance between the current position and the target position
+    const distance = Math.sqrt(
+      (currentX - targetX) ** 2 + (currentY - targetY) ** 2
+    );
+    // If it's less than the speed, we're done
+    if (distance < CURSOR_SPEED * 6) {
+      return false;
+    }
 
-      const speed = Math.max(
-        CURSOR_SPEED * 5,
-        Math.max(CURSOR_SPEED, distance / 20)
-      );
-      // Otherwise, move towards the target
-      const angle = Math.atan2(y - currentY, x - currentX);
-      const newX = currentX + speed * Math.cos(angle);
-      const newY = currentY + speed * Math.sin(angle);
-      await this.tldraw!.updatePresence({ cursor: { x: newX, y: newY } });
-      return true;
+    const speed = Math.max(
+      CURSOR_SPEED * 5,
+      Math.max(CURSOR_SPEED, distance / 20)
+    );
+    // Otherwise, move towards the target
+    const angle = Math.atan2(targetY - currentY, targetX - currentX);
+    const newX = currentX + speed * Math.cos(angle);
+    const newY = currentY + speed * Math.sin(angle);
+    await this.tldraw!.updatePresence({ cursor: { x: newX, y: newY } });
+    return true;
+  }
+
+  async travel(x: number, y: number) {
+    let interval: NodeJS.Timeout;
+
+    const doTravel = (): Promise<void> => {
+      return new Promise((resolve) => {
+        // Call updatePosition every 30ms until it returns false
+        interval = setInterval(async () => {
+          const keepGoing = await this.updatePosition(x, y);
+          //console.log("keepGoing", keepGoing);
+          if (!keepGoing) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 30);
+      });
     };
-
-    // Call updatePosition every 10ms until it returns false
-    const interval = setInterval(async () => {
-      const keepGoing = await updatePosition();
-      //console.log("keepGoing", keepGoing);
-      if (!keepGoing) {
-        clearInterval(interval);
-      }
-    }, 10);
-
-    // Time out after 3 seconds anyway
-    setTimeout(() => {
+    await Promise.race([
+      doTravel(),
+      new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      }),
+    ]).finally(() => {
       clearInterval(interval);
-    }, 1000);
+    });
   }
 
   onAwarenessUpdate() {

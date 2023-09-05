@@ -7,7 +7,11 @@
  * - pageId -- this is the page of the canvas that we're on
  */
 
-import type { TLInstancePresence, TLPageId } from "@tldraw/tldraw";
+import {
+  shapeIdValidator,
+  type TLInstancePresence,
+  type TLPageId,
+} from "@tldraw/tldraw";
 import * as Y from "yjs";
 import YProvider from "y-partykit/provider";
 
@@ -145,6 +149,49 @@ export default class TldrawUtils {
     return textShape;
   }
 
+  async createGeoShape(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    geo: "rectangle" | "triangle" | "circle"
+  ) {
+    console.log("createGeoShape", x, y, width, height, geo);
+    const shapeId = await this.getShapeId();
+    const shape = {
+      id: shapeId,
+      type: "geo",
+      x,
+      y,
+      isLocked: false,
+      rotation: 0,
+      opacity: 1,
+      meta: {},
+      props: {
+        color: "blue",
+        geo: geo,
+        size: "m",
+        w: width,
+        h: height,
+        text: "",
+        font: "draw",
+        labelColor: "black",
+        fill: "none",
+        dash: "draw",
+        align: "middle",
+        verticalAlign: "middle",
+        growY: 0,
+        url: "",
+      },
+      parentId: this.pageId,
+      index: this.getNewHighestIndex(),
+      typeName: "shape",
+    };
+    const map = this.doc!.getMap(this.roomId);
+    map.set(shapeId, shape);
+    return shapeId;
+  }
+
   getNewHighestIndex() {
     // Get all indexes of records with `parentId: pageId as TLPageId`
     // We can use map.entries, or map.values
@@ -154,17 +201,11 @@ export default class TldrawUtils {
       .filter((record) => record.parentId === this.pageId)
       .map((record) => record.index);
     // Find the highest index using string comparison ("a6" is greater than "a5")
-    const highestIndex = indexes.reduce((highest, index) => {
-      if (index > highest) {
-        return index;
-      }
-      return highest;
-    }, "a0");
-    // Increment the highest index
-    const newHighestIndex = highestIndex.replace(
-      /(\d+)$/,
-      (match: string, number: string) => `${match}${parseInt(number, 10) + 1}`
-    );
-    return newHighestIndex;
+    // Sort the array of strings
+    indexes.sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+
+    // Get the number from the last string and increment it
+    const lastNumber = parseInt(indexes[indexes.length - 1].slice(1));
+    return `a${lastNumber + 1}`;
   }
 }
