@@ -16,12 +16,22 @@ import "@tldraw/tldraw/tldraw.css";
 import { useNpc } from "./npc-context";
 import { useYjsStore } from "./useYjsStore";
 
+const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_HOST!;
+
+const PARTYKIT_PROTOCOL =
+  PARTYKIT_HOST?.startsWith("localhost") ||
+  PARTYKIT_HOST?.startsWith("127.0.0.1")
+    ? "http"
+    : "https";
+
+const PARTYKIT_URL = `${PARTYKIT_PROTOCOL}://${PARTYKIT_HOST}`;
+
 export default function APIExample() {
   const { setEditor } = useNpc();
 
   const store = useYjsStore({
     roomId: "dolphin-example",
-    hostUrl: "ws://127.0.0.1:1999/party",
+    hostUrl: `${PARTYKIT_URL}/party`,
   });
 
   const handleMount = (editor: Editor) => {
