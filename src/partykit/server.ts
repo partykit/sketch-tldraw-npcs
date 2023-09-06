@@ -7,6 +7,7 @@
 
 import { PartyKitServer, PartyKitRoom } from "partykit/server";
 import { onConnect } from "y-partykit";
+import { YPartyKitStorage } from "y-partykit/storage";
 
 import { type TLInstancePresence, TLRecord } from "@tldraw/tldraw";
 
@@ -19,7 +20,8 @@ export default {
   onConnect(ws, room) {
     console.log("[main] onConnect: someone connected");
     return onConnect(ws, room, {
-      callback: {
+      persist: true,
+      /*callback: {
         async handler(ydoc) {
           // called every few seconds after edits
           try {
@@ -35,11 +37,12 @@ export default {
             console.error(e);
           }
         },
-      },
+      },*/
     });
   },
-  onRequest(req, room) {
-    const ydoc = (room as YDocRoom).ydoc;
+  async onRequest(req, room) {
+    const storage = new YPartyKitStorage(room.storage);
+    const ydoc = await storage.getYDoc(room.id);
 
     if (req.method === "GET") {
       if (!ydoc) {

@@ -60,6 +60,12 @@ export default class NPC implements PartyServer {
       const host = url.host;
       const server = url.pathname.slice("/parties".length).split("/")[1];
       const partyId = this.party.id;
+      console.log(
+        "Attempting to connect to host, server, partyId",
+        host,
+        server,
+        partyId
+      );
 
       this.doc = new Y.Doc();
       this.provider = new YProvider(host, partyId, this.doc);
