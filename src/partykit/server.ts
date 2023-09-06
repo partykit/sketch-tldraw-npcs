@@ -13,6 +13,7 @@ import { type TLInstancePresence, TLRecord } from "@tldraw/tldraw";
 
 type YDocRoom = {
   ydoc: any;
+  awareness: any;
 } & PartyKitRoom;
 
 //export default { onConnect };
@@ -21,12 +22,14 @@ export default {
     console.log("[main] onConnect: someone connected");
     return onConnect(ws, room, {
       persist: true,
-      /*callback: {
+      callback: {
         async handler(ydoc) {
           // called every few seconds after edits
+          /*
           try {
             (room as YDocRoom).ydoc = ydoc;
             const awareness = (ydoc as any).awareness;
+            (room as YDocRoom).awareness = awareness;
             const states = awareness.getStates() as Map<
               number,
               { presence: TLInstancePresence }
@@ -35,9 +38,9 @@ export default {
             //console.log("states", JSON.stringify(Array.from(states), null, 2));
           } catch (e) {
             console.error(e);
-          }
+          }*/
         },
-      },*/
+      },
     });
   },
   async onRequest(req, room) {

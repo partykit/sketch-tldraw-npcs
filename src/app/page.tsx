@@ -3,6 +3,7 @@
 import Whiteboard from "@/app/components/Whiteboard";
 import WalkieTalkie from "@/app/components/WalkieTalkie";
 import { NpcProvider } from "@/app/components/npc-context";
+import Sidebar from "./components/Sidebar";
 
 /*export default function Home() {
   return (
@@ -25,7 +26,14 @@ import { NpcProvider } from "@/app/components/npc-context";
 export default function Home() {
   return (
     <NpcProvider>
-      <Whiteboard />
+      <div className="fixed overflow-hidden inset-0 flex flex-row h-full w-full flex-col sm:flex-row">
+        <div className="grow">
+          <Whiteboard />
+        </div>
+        <div className="grow-0 shrink-0 w-full sm:w-80 h-1/3 sm:h-full border-l border-neutral-200 pl-2">
+          <Sidebar />
+        </div>
+      </div>
       <WalkieTalkie />
     </NpcProvider>
   );

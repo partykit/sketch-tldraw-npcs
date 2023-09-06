@@ -15,12 +15,14 @@ type NpcContextType = {
   editor: Editor | null;
   setEditor: (editor: Editor | null) => void;
   embassy: TLShape | null;
+  currentUserId: string | null;
 };
 
 const NpcContext = createContext<NpcContextType>({
   editor: null,
   setEditor: () => {},
   embassy: null,
+  currentUserId: null,
 });
 
 export function useNpc() {
@@ -30,6 +32,7 @@ export function useNpc() {
 export function NpcProvider({ children }: { children: React.ReactNode }) {
   const [editor, setEditor] = useState<Editor | null>(null);
   const [embassy, setEmbassy] = useState<TLShape | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!editor) return;
@@ -39,6 +42,8 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
     if (embassy) {
       setEmbassy(embassy);
     }
+
+    setCurrentUserId(editor.user.id as string);
 
     const removeListener = editor.store.listen(
       function monitorEmbassy({ changes }) {
@@ -67,6 +72,7 @@ export function NpcProvider({ children }: { children: React.ReactNode }) {
         editor: editor,
         setEditor: setEditor,
         embassy: embassy,
+        currentUserId: currentUserId,
       }}
     >
       {children}

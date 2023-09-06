@@ -4,7 +4,8 @@
     "parties": {
         "npcPoet": "src/partykit/npc-poet.ts",
         "npcPainter": "src/partykit/npc-painter.ts",
-        "npcMaker": "src/partykit/npc-maker.ts"
+        "npcMaker": "src/partykit/npc-maker.ts",
+        "chat": "src/partykit/chat.ts"
     },
     "persist": false
 }
