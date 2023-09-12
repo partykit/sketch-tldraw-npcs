@@ -61,10 +61,10 @@ export default class NPCPainter extends NPC {
   async onNewStarShape(shape: TLShape) {
     const x = shape.x + (shape.props as TLShapeProps).w / 2;
     const y = shape.y + (shape.props as TLShapeProps).h / 2;
+    this.changeState(NPCState.Painting);
     await this.travel(x, y);
     this.npcMemory["starId"] = shape.id;
     const oh = `O${"h".repeat(1 + Math.floor(Math.random() * 6))}`;
     this.tldraw!.updatePresence({ chatMessage: `${oh} let me help` });
-    this.changeState(NPCState.Painting);
   }
 }
