@@ -23,11 +23,11 @@ export default function FacePile({
       {otherUsers.map((user) => {
         switch (user.userId) {
           case "npcMaker":
-            return <NpcMakerAvatar key={user.id} />;
+            return <NpcMakerAvatar sidebarEl={sidebarEl} key={user.id} />;
           case "npcPainter":
-            return <NpcPainterAvatar key={user.id} />;
+            return <NpcPainterAvatar sidebarEl={sidebarEl} key={user.id} />;
           case "npcPoet":
-            return <NpcPoetAvatar key={user.id} />;
+            return <NpcPoetAvatar sidebarEl={sidebarEl} key={user.id} />;
           default:
             return <Avatar user={user} key={user.id} />;
         }

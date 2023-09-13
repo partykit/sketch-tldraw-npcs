@@ -1,7 +1,11 @@
 import { useTldraw } from "@/app/hooks/tldraw-context";
 import NpcAvatar from "./NpcAvatar";
 
-export default function Avatar() {
+export default function Avatar({
+  sidebarEl,
+}: {
+  sidebarEl: HTMLDivElement | null;
+}) {
   const { npcPainter: npc } = useTldraw();
   if (!npc) return null;
 
