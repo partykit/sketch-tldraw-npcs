@@ -5,9 +5,11 @@ import * as Popover from "@radix-ui/react-popover";
 export default function FacePile({
   otherUsers,
   currentUser,
+  sidebarEl,
 }: {
   otherUsers: User[];
   currentUser: User | null;
+  sidebarEl: HTMLDivElement | null;
 }) {
   const style = {
     boxShadow: "-4px 4px 0px 0px rgba(0, 0, 0, 0.3)",
@@ -25,8 +27,9 @@ export default function FacePile({
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Content
-              sideOffset={-1}
-              className="rounded-sm p-4 m-2 bg-white withShadow w-72"
+              className="rounded-sm p-4 m-2 bg-white withShadow w-64"
+              collisionBoundary={sidebarEl}
+              collisionPadding={{ left: 6, right: 6 }}
             >
               Some more info…
               <Popover.Arrow width={20} height={10} style={{ fill: "white" }} />

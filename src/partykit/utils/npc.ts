@@ -3,6 +3,7 @@ import type {
   PartyServer,
   PartyConnection,
   PartyConnectionContext,
+  PartyRequest,
 } from "partykit/server";
 
 import type { TLShape } from "@tldraw/tldraw";

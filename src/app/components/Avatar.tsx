@@ -1,4 +1,5 @@
 import type { User } from "@/partykit/chat";
+import CircularButton from "./CircularButton";
 
 export default function Avatar({
   user,
@@ -24,12 +25,11 @@ export default function Avatar({
       : "w-8 h-8 text-sm border";
 
   return (
-    <div
-      className={`rounded-full bg-white flex justify-center items-center withShadow ${sizeClasses}`}
-      style={styles}
-      title={user.userId}
-    >
-      {name}
-    </div>
+    <CircularButton
+      text={name}
+      color={user.color}
+      borderColor={user.color}
+      variant={variant}
+    />
   );
 }

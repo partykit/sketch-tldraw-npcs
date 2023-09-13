@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import usePartySocket from "partysocket/react";
 import FacePile from "./Facepile";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import type { User } from "@/partykit/chat";
 import { useNpc } from "./npc-context";
+import Summon from "./Summon";
 
 export type ChatMessage = {
   text: string;
@@ -15,6 +16,7 @@ const MAX_MESSAGES = 100;
 
 export default function Sidebar() {
   const { editor, currentUserId } = useNpc();
+  const sidebarRef = useRef<HTMLDivElement>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [otherUsers, setOtherUsers] = useState<User[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -62,9 +64,19 @@ export default function Sidebar() {
   const userCount = otherUsers.length + (currentUser !== null ? 1 : 0);
 
   return (
-    <div className="w-full h-full relative p-2 overflow-y-scroll flex flex-col">
+    <div
+      className="w-full h-full relative p-2 overflow-y-scroll flex flex-col"
+      ref={sidebarRef}
+    >
       <div className="absolute top-2 left-2 w-full">
-        <FacePile otherUsers={otherUsers} currentUser={currentUser} />
+        <div className="flex flex-row justify-between items-center">
+          <Summon sidebarEl={sidebarRef?.current} />
+          <FacePile
+            otherUsers={otherUsers}
+            currentUser={currentUser}
+            sidebarEl={sidebarRef?.current}
+          />
+        </div>
       </div>
       <div className="pt-10">People present: {userCount}</div>
       <div>currentUserId: {currentUserId}</div>
