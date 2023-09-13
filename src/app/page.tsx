@@ -1,7 +1,6 @@
 "use client";
 
 import Whiteboard from "@/app/components/Whiteboard";
-import WalkieTalkie from "@/app/components/WalkieTalkie";
 import { TldrawProvider } from "@/app/hooks/tldraw-context";
 import Sidebar from "./components/Sidebar";
 
