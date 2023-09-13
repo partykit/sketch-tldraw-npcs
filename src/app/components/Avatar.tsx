@@ -25,7 +25,7 @@ export default function Avatar({
 
   return (
     <div
-      className={`rounded-full bg-white flex justify-center items-center ${sizeClasses}`}
+      className={`rounded-full bg-white flex justify-center items-center withShadow ${sizeClasses}`}
       style={styles}
       title={user.userId}
     >

@@ -85,11 +85,6 @@ export default class NPC implements PartyServer {
     }
 
     connection.send(JSON.stringify({ type: "state", state: this.npcState }));
-    if (this.npcState !== NPCState.NotConnected) {
-      // Update the current presence state so new users can see the NPC
-      await this.tldraw.updatePresence({});
-      this.party.storage.setAlarm(new Date().getTime() + 1000 * 30);
-    }
   }
 
   onClose(connection: PartyConnection) {
@@ -105,7 +100,7 @@ export default class NPC implements PartyServer {
   onAlarm() {
     if (this.npcState !== NPCState.NotConnected) {
       this.tldraw!.updatePresence({});
-      console.log("onAlarm: updating presence");
+      //console.log("onAlarm: updating presence");
       this.party.storage.setAlarm(new Date().getTime() + 1000 * 30);
     }
   }
@@ -130,6 +125,8 @@ export default class NPC implements PartyServer {
         },
       });
       this.changeState(NPCState.Idle);
+      // Keep this NPC alive
+      this.party.storage.setAlarm(new Date().getTime() + 1000 * 30);
     } else if (msg.type === "banish") {
       this.tldraw!.banish();
       this.changeState(NPCState.NotConnected);
