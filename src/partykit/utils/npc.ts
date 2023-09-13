@@ -205,6 +205,8 @@ export default class NPC implements PartyServer {
     if (!embassy) {
       if (this.embassy) {
         this.embassy = undefined;
+        this.changeState(NPCState.NotConnected);
+        this.tldraw?.banish();
       }
     }
     if (embassy) {
