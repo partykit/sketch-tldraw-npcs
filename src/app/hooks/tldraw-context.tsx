@@ -17,6 +17,8 @@ type TldrawContextType = {
   embassy: TLShape | null;
   currentUserId: string | null;
   npcPoet: Npc | null;
+  npcPainter: Npc | null;
+  npcMaker: Npc | null;
 };
 
 const TldrawContext = createContext<TldrawContextType>({
@@ -25,6 +27,8 @@ const TldrawContext = createContext<TldrawContextType>({
   embassy: null,
   currentUserId: null,
   npcPoet: null,
+  npcPainter: null,
+  npcMaker: null,
 });
 
 export function useTldraw() {
@@ -39,8 +43,25 @@ export function TldrawProvider({ children }: { children: React.ReactNode }) {
   const npcPoet = useNpc({
     id: "npcPoet",
     name: "It writes poems",
+    shortName: "👨‍🎤",
+    colorClass: "bg-lime-200",
+    hoverColorClass: "hover:bg-lime-300",
+  });
+
+  const npcPainter = useNpc({
+    id: "npcPainter",
+    name: "It paints stars",
     shortName: "🧑‍🎨",
     colorClass: "bg-pink-200",
+    hoverColorClass: "hover:bg-pink-300",
+  });
+
+  const npcMaker = useNpc({
+    id: "npcMaker",
+    name: "It makes shapes",
+    shortName: "👷",
+    colorClass: "bg-cyan-200",
+    hoverColorClass: "hover:bg-cyan-300",
   });
 
   useEffect(() => {
@@ -83,6 +104,8 @@ export function TldrawProvider({ children }: { children: React.ReactNode }) {
         embassy: embassy,
         currentUserId: currentUserId,
         npcPoet: npcPoet,
+        npcPainter: npcPainter,
+        npcMaker: npcMaker,
       }}
     >
       {children}

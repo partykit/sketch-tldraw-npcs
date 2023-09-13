@@ -9,6 +9,7 @@ export type Npc = {
   name: string; // for the avatar
   shortName: string; // for the avatar
   colorClass: string;
+  hoverColorClass: string;
   send: (message: any) => void;
   summon: (pageId: string) => void;
   npcState: NPCState;
@@ -19,11 +20,13 @@ export function useNpc({
   name, // human-readable name. e.g. "It makes shapes"
   shortName, // for the avatar, e.g. an emoji
   colorClass,
+  hoverColorClass,
 }: {
   id: string;
   name: string;
   shortName: string;
   colorClass: string;
+  hoverColorClass: string;
 }) {
   const [npcState, setNpcState] = useState<NPCState>(NPCState.NotConnected);
 
@@ -64,6 +67,7 @@ export function useNpc({
     name: name,
     shortName: shortName,
     colorClass: colorClass,
+    hoverColorClass: hoverColorClass,
     send: send,
     summon: summon,
     npcState: npcState,

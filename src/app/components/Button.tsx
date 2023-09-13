@@ -18,7 +18,8 @@ export default function Button({
           text-black/60 border-4
           ${bgColor} border-t-white/70 border-l-white/70 border-r-black/50 border-b-black/50
           hover:text-black/70 ${bgColorHover} hover:border-t-black/50 hover:border-l-black/50 hover:border-r-white/60 hover:border-b-white/60
-          disabled:text-neutral-500/80 disabled:bg-transparent disabled:hover:bg-transparent disabled:border-transparent disabled:cursor-not-allowed`}
+          disabled:text-neutral-500/80 disabled:bg-transparent disabled:hover:bg-transparent disabled:border-transparent disabled:cursor-not-allowed
+          flex justify-center items-center gap-2`}
       disabled={disabled ?? false}
     >
       {children}
