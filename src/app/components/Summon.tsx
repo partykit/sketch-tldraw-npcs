@@ -1,5 +1,7 @@
 import CircularButton from "./CircularButton";
 import CreateEmbassy from "./CreateEmbassy";
+import { useTldraw } from "@/app/hooks/tldraw-context";
+import Button from "./Button";
 import * as Popover from "@radix-ui/react-popover";
 
 export default function Summon({
@@ -7,6 +9,10 @@ export default function Summon({
 }: {
   sidebarEl: HTMLDivElement | null;
 }) {
+  const { npcPoet, editor } = useTldraw();
+
+  const pageId = editor?.currentPageId;
+
   return (
     <Popover.Root>
       <Popover.Trigger>
@@ -19,6 +25,9 @@ export default function Summon({
           collisionPadding={{ left: 6, right: 6 }}
         >
           <CreateEmbassy />
+          {pageId && (
+            <Button onClick={() => npcPoet?.summon(pageId)}>Summon Poet</Button>
+          )}
           <Popover.Arrow width={20} height={10} style={{ fill: "white" }} />
         </Popover.Content>
       </Popover.Portal>

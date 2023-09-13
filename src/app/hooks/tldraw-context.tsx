@@ -9,12 +9,14 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { Editor, TLShape, createShapeId } from "@tldraw/tldraw";
 import { EMBASSY_ID_STRING } from "@/app/components/CreateEmbassy";
+import { useNpc, type Npc } from "./useNpc";
 
 type TldrawContextType = {
   editor: Editor | null;
   setEditor: (editor: Editor | null) => void;
   embassy: TLShape | null;
   currentUserId: string | null;
+  npcPoet: Npc | null;
 };
 
 const TldrawContext = createContext<TldrawContextType>({
@@ -22,6 +24,7 @@ const TldrawContext = createContext<TldrawContextType>({
   setEditor: () => {},
   embassy: null,
   currentUserId: null,
+  npcPoet: null,
 });
 
 export function useTldraw() {
@@ -32,6 +35,13 @@ export function TldrawProvider({ children }: { children: React.ReactNode }) {
   const [editor, setEditor] = useState<Editor | null>(null);
   const [embassy, setEmbassy] = useState<TLShape | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  const npcPoet = useNpc({
+    id: "npcPoet",
+    name: "It writes poems",
+    shortName: "🧑‍🎨",
+    colorClass: "bg-pink-200",
+  });
 
   useEffect(() => {
     if (!editor) return;
@@ -72,6 +82,7 @@ export function TldrawProvider({ children }: { children: React.ReactNode }) {
         setEditor: setEditor,
         embassy: embassy,
         currentUserId: currentUserId,
+        npcPoet: npcPoet,
       }}
     >
       {children}
