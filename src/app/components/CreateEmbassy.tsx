@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Editor, TLGeoShape, createShapeId } from "@tldraw/tldraw";
-import { useNpc } from "./npc-context";
+import { useTldraw } from "@/app/hooks/tldraw-context";
 
 import Button from "./Button";
 
@@ -9,7 +9,7 @@ import { BARGE_SIDE, BARGE_HEIGHT, POOL_RADIUS } from "@/shared/embassy";
 export const EMBASSY_ID_STRING = "embassy";
 
 export default function CreateEmbassy() {
-  const { editor, embassy } = useNpc();
+  const { editor, embassy } = useTldraw();
 
   // The embassy may already exist
   useEffect(() => {

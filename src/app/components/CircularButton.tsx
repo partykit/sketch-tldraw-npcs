@@ -1,5 +1,3 @@
-import type { User } from "@/partykit/chat";
-
 export default function CircularButton({
   text = "",
   color = "black",

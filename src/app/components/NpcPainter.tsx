@@ -1,6 +1,6 @@
 import { useState } from "react";
 import usePartySocket from "partysocket/react";
-import { useNpc } from "./npc-context";
+import { useTldraw } from "@/app/hooks/tldraw-context";
 
 import type { SummonMessage, StateMessage } from "@/partykit/utils/npc";
 import { NPCState } from "@/partykit/utils/npc";
@@ -9,7 +9,7 @@ import Button from "./Button";
 
 export default function NpcPainter() {
   const [npcState, setNpcState] = useState<NPCState>(NPCState.NotConnected);
-  const { editor, embassy } = useNpc();
+  const { editor, embassy } = useTldraw();
 
   const socket = usePartySocket({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,

@@ -2,7 +2,7 @@
 
 import "./walkie-talkie.styles.css";
 
-import { useNpc } from "./npc-context";
+import { useTldraw } from "@/app/hooks/tldraw-context";
 
 import CreateEmbassy from "./CreateEmbassy";
 import NpcPoet from "./NpcPoet";
@@ -10,7 +10,7 @@ import NpcPainter from "./NpcPainter";
 import NpcMaker from "./NpcMaker";
 
 export default function Debug() {
-  const { editor, embassy } = useNpc();
+  const { editor, embassy } = useTldraw();
   return (
     <div className="fixed w-56 top-14 left-2 z-10">
       <section className="xmetal xlinear bg-gradient-to-r from-stone-200 to-stone-400 flex flex-col gap-2 justify-start items-start shadow-lg shadow-cyan-300/50 outline outline-1 outline-neutral-200 w-full text-sm text-neutral-500">

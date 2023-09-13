@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import usePartySocket from "partysocket/react";
-import { useNpc } from "./npc-context";
+import { useTldraw } from "@/app/hooks/tldraw-context";
 
 import type { AnimateMessage, ComposeMessage } from "@/partykit/npc-poet";
 import type {
@@ -14,7 +14,7 @@ import Button from "./Button";
 
 export default function NpcPoet() {
   const [npcState, setNpcState] = useState<NPCState>(NPCState.NotConnected);
-  const { editor, embassy } = useNpc();
+  const { editor, embassy } = useTldraw();
 
   const socket = usePartySocket({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,

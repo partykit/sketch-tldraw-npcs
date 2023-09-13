@@ -4,7 +4,7 @@ import FacePile from "./Facepile";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import type { User } from "@/partykit/chat";
-import { useNpc } from "./npc-context";
+import { useTldraw } from "@/app/hooks/tldraw-context";
 import Summon from "./Summon";
 
 export type ChatMessage = {
@@ -15,7 +15,7 @@ export type ChatMessage = {
 const MAX_MESSAGES = 100;
 
 export default function Sidebar() {
-  const { editor, currentUserId } = useNpc();
+  const { editor, currentUserId } = useTldraw();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [otherUsers, setOtherUsers] = useState<User[]>([]);

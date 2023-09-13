@@ -13,11 +13,11 @@ import {
   TLInstancePresence,
 } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
-import { useNpc } from "./npc-context";
-import { useYjsStore } from "./useYjsStore";
+import { useTldraw } from "@/app/hooks/tldraw-context";
+import { useYjsStore } from "@/app/hooks/useYjsStore";
 
-export default function APIExample() {
-  const { setEditor } = useNpc();
+export default function Whitedraw() {
+  const { setEditor } = useTldraw();
 
   const store = useYjsStore({
     roomId: "dolphin-example",
