@@ -31,7 +31,7 @@ export function useNpc({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
     party: id,
     room: "dolphin-example",
-    startClosed: true,
+    startClosed: false,
     onMessage: (message) => {
       const msg = JSON.parse(message.data);
       switch (msg.type) {

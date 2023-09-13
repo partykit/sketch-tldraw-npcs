@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import Button from "./Button";
+import Button from "../Button";
 
 export default function NpcMakerDrawButton({
   submitPrompt,
@@ -43,8 +43,7 @@ export default function NpcMakerDrawButton({
     <>
       {!showBoxesPromptInput && (
         <Button
-          bgColor="bg-cyan-200"
-          bgColorHover="hover:bg-cyan-300"
+          className="bg-cyan-200 hover:bg-cyan-300"
           onClick={() => setShowBoxesPromptInput(true)}
         >
           Draw...

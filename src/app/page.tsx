@@ -23,7 +23,6 @@ export default function Home() {
           <Sidebar />
         </div>
       </div>
-      <WalkieTalkie />
     </TldrawProvider>
   );
 }

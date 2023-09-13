@@ -6,7 +6,7 @@ import type { SummonMessage, StateMessage } from "@/partykit/utils/npc";
 import { NPCState } from "@/partykit/utils/npc";
 
 import Button from "./Button";
-import NpcMakerDrawButton from "./NpcMakerDrawButton";
+import NpcMakerDrawButton from "./avatars/NpcMakerDrawButton";
 
 export default function NpcMaker() {
   const [npcState, setNpcState] = useState<NPCState>(NPCState.NotConnected);

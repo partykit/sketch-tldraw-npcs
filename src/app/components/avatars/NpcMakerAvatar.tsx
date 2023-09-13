@@ -1,5 +1,8 @@
 import { useTldraw } from "@/app/hooks/tldraw-context";
 import NpcAvatar from "./NpcAvatar";
+import { NPCState } from "@/partykit/utils/npc";
+import * as Popover from "@radix-ui/react-popover";
+import NpcMakerDrawButton from "./NpcMakerDrawButton";
 
 export default function Avatar({
   sidebarEl,
@@ -9,5 +12,31 @@ export default function Avatar({
   const { npcMaker: npc } = useTldraw();
   if (!npc) return null;
 
-  return <NpcAvatar text={npc.shortName} className={npc.className} />;
+  const submitPrompt = (prompt: string) => {
+    npc.send({
+      type: "boxes",
+      prompt,
+    });
+  };
+
+  if (!npc) return null;
+
+  return (
+    <Popover.Root>
+      <Popover.Trigger>
+        <NpcAvatar text={npc.shortName} className={npc.className} />
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
+          className="rounded-sm m-2 bg-white withShadow w-64 text-sm bg-white"
+          collisionBoundary={sidebarEl}
+          collisionPadding={{ left: 6, right: 6 }}
+        >
+          <NpcMakerDrawButton submitPrompt={submitPrompt} />
+
+          <Popover.Arrow width={20} height={10} style={{ fill: "white" }} />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
 }
