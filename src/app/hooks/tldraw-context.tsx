@@ -44,24 +44,21 @@ export function TldrawProvider({ children }: { children: React.ReactNode }) {
     id: "npcPoet",
     name: "It writes poems",
     shortName: "👨‍🎤",
-    colorClass: "bg-lime-200",
-    hoverColorClass: "hover:bg-lime-300",
+    className: "bg-lime-200 hover:bg-lime-300",
   });
 
   const npcPainter = useNpc({
     id: "npcPainter",
     name: "It paints stars",
     shortName: "🧑‍🎨",
-    colorClass: "bg-pink-200",
-    hoverColorClass: "hover:bg-pink-300",
+    className: "bg-pink-200 hover:bg-pink-300",
   });
 
   const npcMaker = useNpc({
     id: "npcMaker",
     name: "It makes shapes",
     shortName: "👷",
-    colorClass: "bg-cyan-200",
-    hoverColorClass: "hover:bg-cyan-300",
+    className: "bg-cyan-200 hover:bg-cyan-300",
   });
 
   useEffect(() => {

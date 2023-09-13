@@ -18,11 +18,7 @@ function SummonButton({
   if (!pageId) return null;
 
   return (
-    <Button
-      onClick={() => npc.summon(pageId)}
-      bgColor={npc.colorClass}
-      bgColorHover={npc.hoverColorClass}
-    >
+    <Button onClick={() => npc.summon(pageId)} className={npc.className}>
       Summon <span className="italic">{npc.name}</span>
     </Button>
   );

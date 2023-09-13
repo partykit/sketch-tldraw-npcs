@@ -14,16 +14,6 @@ export default function Avatar({
     name ??
     (user.isAnonymous || !user.userName ? "" : Array.from(user.userName)[0]);
 
-  const styles = {
-    borderColor: user.color,
-    color: user.color,
-  };
-
-  const sizeClasses =
-    variant === "default"
-      ? "w-12 h-12 text-xl border-2"
-      : "w-8 h-8 text-sm border";
-
   return (
     <CircularButton
       text={name}

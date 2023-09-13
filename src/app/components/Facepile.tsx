@@ -1,5 +1,8 @@
 import type { User } from "@/partykit/chat";
 import Avatar from "./Avatar";
+import NpcMakerAvatar from "./avatars/NpcMakerAvatar";
+import NpcPoetAvatar from "./avatars/NpcPoetAvatar";
+import NpcPainterAvatar from "./avatars/NpcPainterAvatar";
 import * as Popover from "@radix-ui/react-popover";
 
 export default function FacePile({
@@ -17,9 +20,18 @@ export default function FacePile({
 
   return (
     <div className="flex flex-row -space-x-4 justify-end items-center pr-3">
-      {otherUsers.map((user) => (
-        <Avatar user={user} key={user.id} />
-      ))}
+      {otherUsers.map((user) => {
+        switch (user.userId) {
+          case "npcMaker":
+            return <NpcMakerAvatar key={user.id} />;
+          case "npcPainter":
+            return <NpcPainterAvatar key={user.id} />;
+          case "npcPoet":
+            return <NpcPoetAvatar key={user.id} />;
+          default:
+            return <Avatar user={user} key={user.id} />;
+        }
+      })}
       {currentUser && (
         <Popover.Root>
           <Popover.Trigger>
