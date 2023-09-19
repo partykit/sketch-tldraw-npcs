@@ -94,6 +94,7 @@ export default class NPCPoet extends NPC {
       for (const step of sequence) {
         await step();
       }
+      this.sendChatMessage("Done!");
     }
   }
 

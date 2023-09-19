@@ -160,6 +160,19 @@ export default class NPC implements PartyServer {
     return true;
   }
 
+  async sendChatMessage(text: string) {
+    const chat = this.party.context.parties.chat.get(this.party.id);
+    if (!chat) return;
+    await chat.fetch({
+      method: "POST",
+      body: JSON.stringify({
+        action: "chat",
+        text,
+        userId: this.party.name,
+      }),
+    });
+  }
+
   async travel(x: number, y: number) {
     let interval: NodeJS.Timeout;
 

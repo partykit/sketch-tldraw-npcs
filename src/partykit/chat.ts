@@ -27,12 +27,19 @@ type ChatMessage = {
   user: User;
 };
 
+export type SendMessage = {
+  action: "send";
+  text: string;
+  userId: string;
+};
+
 export default class Chat implements PartyServer {
   constructor(readonly party: Party) {}
 
   doc: Y.Doc | undefined;
   provider: YProvider | undefined;
   awareness: YProvider["awareness"] | undefined;
+  users: User[] = [];
 
   async onConnect(connection: PartyConnection, ctx: PartyConnectionContext) {
     if (!this.awareness) {
@@ -74,21 +81,22 @@ export default class Chat implements PartyServer {
         };
       });
 
-    const users = states.map(({ clientId, presence }) => {
-      return {
-        id: clientId,
-        userId: presence.userId,
-        isAnonymous: presence.userName === "New User",
-        color: presence.color,
-        userName: presence.userName,
-      } as User;
-    });
+    this.users =
+      states.map(({ clientId, presence }) => {
+        return {
+          id: clientId,
+          userId: presence.userId,
+          isAnonymous: presence.userName === "New User",
+          color: presence.color,
+          userName: presence.userName,
+        } as User;
+      }) || [];
 
     this.party.broadcast(
       JSON.stringify({
         type: "presence",
         count: states.length,
-        users: users ?? [],
+        users: this.users,
       })
     );
   }
@@ -99,6 +107,20 @@ export default class Chat implements PartyServer {
 
     if (req.method === "GET") {
       return new Response(JSON.stringify(serializable(states), null, 2));
+    } else if (req.method === "POST") {
+      const { userId, text } = (await req.json()) as SendMessage;
+      // Get the user associated with userId
+      const user = this.users.find((u) => u.userId === userId);
+      if (!user) {
+        return new Response("User not found", { status: 404 });
+      }
+      const chatMessage = {
+        type: "chat",
+        text,
+        user,
+      } as ChatMessage;
+      this.party.broadcast(JSON.stringify(chatMessage));
+      return new Response(JSON.stringify({ status: "ok" }));
     }
 
     return new Response("Unsupported method", { status: 400 });
