@@ -15,7 +15,9 @@ export default function Avatar({
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <NpcAvatar text={npc.shortName} className={npc.className} />
+      <div className="relative"><NpcAvatar text={npc.shortName} className={npc.className} />
+        {npc.npcState === NPCState.Painting && <div className={`absolute top-0 right-0 w-full h-full rounded-full animate-ping ${npc.className}`}></div>}
+        </div>
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content

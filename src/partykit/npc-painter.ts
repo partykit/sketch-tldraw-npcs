@@ -65,6 +65,7 @@ export default class NPCPainter extends NPC {
     await this.travel(x, y);
     this.npcMemory["starId"] = shape.id;
     const oh = `O${"h".repeat(1 + Math.floor(Math.random() * 6))}`;
+    await this.sendChatMessage("I can paint that!");
     this.tldraw!.updatePresence({ chatMessage: `${oh} let me help` });
   }
 }

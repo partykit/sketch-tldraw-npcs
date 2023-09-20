@@ -65,7 +65,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className="w-full h-full relative p-2 overflow-y-scroll flex flex-col"
+      className="w-full h-full relative p-2 overflow-y-scroll overflow-x-clip flex flex-col"
       ref={sidebarRef}
     >
       <div className="absolute top-2 left-2 w-full">

@@ -78,6 +78,7 @@ export default class NPCPoet extends NPC {
     if (msg.type === "summon") {
       this.tldraw!.updatePresence({ userName: "👷", color: "#0891b2", chatMessage: "Maker" });
     } else if (msg.type === "boxes") {
+      await this.sendChatMessage("Ok I need to think about this...");
       const messages = [
         ...AI_PROMPT,
         {
@@ -120,6 +121,7 @@ export default class NPCPoet extends NPC {
             await this.travel(this.embassy?.x || 0, this.embassy?.y || 0);
           }
           this.changeState(NPCState.Idle);
+          await this.sendChatMessage("Done!");
           return { success: true };
         },
       });

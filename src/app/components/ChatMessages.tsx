@@ -26,7 +26,7 @@ export default function ChatMessages({
             />
             <span
               className={`text-black px-3 py-1 rounded-full ${
-                isCurrentUser ? "bg-blue-100" : "bg-neutral-100"
+                isCurrentUser ? "bg-green-100" : "bg-neutral-100"
               }`}
             >
               {msg.text}
