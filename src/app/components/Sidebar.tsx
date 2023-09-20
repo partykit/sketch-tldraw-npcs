@@ -78,8 +78,6 @@ export default function Sidebar() {
           />
         </div>
       </div>
-      <div className="pt-10">People present: {userCount}</div>
-      <div>currentUserId: {currentUserId}</div>
       <div className="flex flex-col gap-4 h-full justify-end">
         <ChatMessages
           messages={messages}

@@ -31,11 +31,11 @@ html,
 	height: 100%;
 }
 
-.withShadow, .withShadow-sm {
+.with-shadow, .with-shadow-sm {
 	position: relative;
 }
 
-.withShadow:before {
+.with-shadow:before {
 	content: "";
   position: absolute;
   top: 0;
@@ -46,7 +46,7 @@ html,
 	box-shadow: 4px 5px 0px 0px rgba(0, 0, 0, 0.4);
 }
 
-.withShadow-sm:before {
+.with-shadow-sm:before {
 	content: "";
   position: absolute;
   top: 0;
@@ -57,6 +57,6 @@ html,
 	box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.4);
 }
 
-.withShadow.rounded-full:before, .withShadow-sm.rounded-full:before	{
+.with-shadow.rounded-full:before, .with-shadow-sm.rounded-full:before	{
   border-radius: 100%;
 }

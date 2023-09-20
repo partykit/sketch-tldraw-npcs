@@ -28,7 +28,7 @@ export default function Avatar({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="rounded-sm m-2 bg-white withShadow w-64 text-sm bg-white"
+          className="rounded-sm m-2 bg-white with-shadow w-64 text-sm bg-white"
           collisionBoundary={sidebarEl}
           collisionPadding={{ left: 6, right: 6 }}
         >

@@ -16,14 +16,13 @@ export default function CircularButton({
 
   const sizeClasses =
     variant === "default"
-      ? "w-12 h-12 text-xl border-2 withShadow"
-      : "w-8 h-8 text-sm border withShadow-sm";
+      ? "w-12 h-12 text-xl border-2 with-shadow"
+      : "w-8 h-8 text-sm border with-shadow-sm";
 
   return (
     <div
       className={`rounded-full bg-white flex justify-center items-center ${sizeClasses}`}
       style={styles}
-      title={text}
     >
       {text}
     </div>
