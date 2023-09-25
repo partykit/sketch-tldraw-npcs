@@ -20,7 +20,7 @@ export default function Whitedraw() {
   const { setEditor } = useTldraw();
 
   const store = useYjsStore({
-    roomId: "dolphin-example",
+    roomId: "dolphin-example-2",
     hostUrl: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
   });
 

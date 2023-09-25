@@ -30,7 +30,7 @@ export function useNpc({
   const socket = usePartySocket({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
     party: id,
-    room: "dolphin-example",
+    room: "dolphin-example-2",
     startClosed: false,
     onMessage: (message) => {
       const msg = JSON.parse(message.data);
