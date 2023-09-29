@@ -9,7 +9,7 @@ import type {
 import type { TLShape } from "@tldraw/tldraw";
 
 import * as Y from "yjs";
-import YProvider from "y-partykit/provider";
+import YPartyKitProvider from "y-partykit/provider";
 
 import TldrawUtils from "./tldraw";
 
@@ -41,8 +41,8 @@ export default class NPC implements PartyServer {
   constructor(readonly party: Party) {}
 
   doc: Y.Doc | undefined;
-  provider: YProvider | undefined;
-  awareness: YProvider["awareness"] | undefined;
+  provider: YPartyKitProvider | undefined;
+  awareness: YPartyKitProvider["awareness"] | undefined;
 
   tldraw: TldrawUtils | undefined;
 
@@ -69,7 +69,7 @@ export default class NPC implements PartyServer {
       );*/
 
       this.doc = new Y.Doc();
-      this.provider = new YProvider(host, partyId, this.doc);
+      this.provider = new YPartyKitProvider(host, partyId, this.doc);
       this.awareness = this.provider.awareness;
 
       this.tldraw = await new TldrawUtils().init(
@@ -102,7 +102,7 @@ export default class NPC implements PartyServer {
     if (this.npcState !== NPCState.NotConnected) {
       this.tldraw!.updatePresence({});
       //console.log("onAlarm: updating presence");
-      this.party.storage.setAlarm(new Date().getTime() + 1000 * 30);
+      this.party.storage.setAlarm(new Date().getTime() + 1000 * 5);
     }
   }
 

@@ -1,27 +1,24 @@
 "use client";
 
-import { useMemo } from "react";
-import {
-  DefaultColorStyle,
-  Editor,
-  TLGeoShape,
-  TLShapePartial,
-  Tldraw,
-  createShapeId,
-  useEditor,
-  useValue,
-  TLInstancePresence,
-} from "@tldraw/tldraw";
+import { Editor, Tldraw, useEditor } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useTldraw } from "@/app/hooks/tldraw-context";
 import { useYjsStore } from "@/app/hooks/useYjsStore";
+
+export const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_HOST!;
+
+export const WEBSOCKET_PROTOCOL =
+  PARTYKIT_HOST?.startsWith("localhost") ||
+  PARTYKIT_HOST?.startsWith("127.0.0.1")
+    ? "ws"
+    : "wss";
 
 export default function Whitedraw() {
   const { setEditor } = useTldraw();
 
   const store = useYjsStore({
     roomId: "dolphin-example-2",
-    hostUrl: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
+    hostUrl: `${WEBSOCKET_PROTOCOL}:${PARTYKIT_HOST}/party/`,
   });
 
   const handleMount = (editor: Editor) => {

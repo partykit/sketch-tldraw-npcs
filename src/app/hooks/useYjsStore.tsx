@@ -14,18 +14,17 @@ import {
   defaultShapeUtils,
   getUserPreferences,
   react,
+  transact,
 } from "@tldraw/tldraw";
 import { useEffect, useMemo, useState } from "react";
-//import { WebsocketProvider } from "y-websocket";
-import YPartyKitProvider from "y-partykit/provider";
+//import YPartyKitProvider from "y-partykit/provider";
 import * as Y from "yjs";
+// @ts-ignore
+import { WebsocketProvider } from "y-websocket";
 
 export function useYjsStore({
   roomId = "example",
   hostUrl = "127.0.0.1:1999",
-  /*import.meta.env.MODE === "development"
-    ? "ws://localhost:1234"
-    : "wss://demos.yjs.dev",*/
   shapeUtils = [],
 }: Partial<{
   hostUrl: string;
@@ -44,10 +43,10 @@ export function useYjsStore({
     const doc = new Y.Doc({ gc: true });
     return {
       doc,
-      //room: new WebsocketProvider(hostUrl, roomId, doc, { connect: true }),
-      room: new YPartyKitProvider(hostUrl, roomId, doc, {
+      room: new WebsocketProvider(hostUrl, roomId, doc, { connect: true }),
+      /*room: new YPartyKitProvider(hostUrl, roomId, doc, {
         connect: true,
-      }),
+      }),*/
       yRecords: doc.getMap<TLRecord>(`tl_${roomId}`),
     };
   }, [hostUrl, roomId]);
@@ -89,7 +88,7 @@ export function useYjsStore({
         // is empty, initialize the yjs doc with the default store records.
         if (yRecords.size === 0) {
           // Create the initial store records
-          Y.transact(doc, () => {
+          transact(() => {
             store.clear();
             store.put([
               DocumentRecordType.create({
@@ -111,10 +110,9 @@ export function useYjsStore({
           });
         } else {
           // Replace the store records with the yjs doc records
-          Y.transact(doc, () => {
+          transact(() => {
             store.clear();
-            //store.put([...yRecords.values()]);
-            store.put(Array.from(yRecords.values()));
+            store.put([...yRecords.values()]);
           });
         }
 

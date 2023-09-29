@@ -39,11 +39,11 @@ export default function FacePile({
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Content
-              className="rounded-sm p-4 m-2 bg-white withShadow w-64"
+              className="rounded-sm p-4 m-2 bg-white with-shadow w-64"
               collisionBoundary={sidebarEl}
               collisionPadding={{ left: 6, right: 6 }}
             >
-              Some more info…
+              It’s me!
               <Popover.Arrow width={20} height={10} style={{ fill: "white" }} />
             </Popover.Content>
           </Popover.Portal>

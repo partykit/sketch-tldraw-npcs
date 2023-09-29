@@ -84,7 +84,7 @@ export default class TldrawUtils {
 
     const record = {
       id: this.presenceId,
-      currentPageId: this.pageId,
+      currentPageId: this.pageId || "page:page",
       userId: this.userId,
       userName: "🐬", // dolphin emoji
       cursor: {

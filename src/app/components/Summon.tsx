@@ -35,13 +35,13 @@ export default function Summon({
 
   const summoningButtons = [
     npcPoet?.npcState === NPCState.NotConnected ? (
-      <SummonButton npc={npcPoet} pageId={pageId} />
+      <SummonButton key="npcPoet" npc={npcPoet} pageId={pageId} />
     ) : null,
     npcPainter?.npcState === NPCState.NotConnected ? (
-      <SummonButton npc={npcPainter} pageId={pageId} />
+      <SummonButton key="npcPainter" npc={npcPainter} pageId={pageId} />
     ) : null,
     npcMaker?.npcState === NPCState.NotConnected ? (
-      <SummonButton npc={npcMaker} pageId={pageId} />
+      <SummonButton key="npcMaker" npc={npcMaker} pageId={pageId} />
     ) : null,
   ].filter((el) => el !== null);
 

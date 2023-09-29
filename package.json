@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@radix-ui/react-popover": "1.0.6",
-    "@tldraw/tldraw": "^2.0.0-canary.a3a780414a07",
+    "@tldraw/tldraw": "^2.0.0-canary.a176522c57e4",
     "@types/node": "20.5.0",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
@@ -20,13 +20,14 @@
     "eslint-config-next": "13.4.17",
     "next": "13.4.17",
     "openai": "^4.4.0",
-    "partykit": "^0.0.0-a790d5c",
-    "partysocket": "^0.0.0-a790d5c",
+    "partykit": "^0.0.0-9a9fd8a",
+    "partysocket": "^0.0.0-9a9fd8a",
     "postcss": "8.4.28",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.3",
     "typescript": "5.1.6",
-    "y-partykit": "^0.0.0-bae7334"
+    "y-partykit": "^0.0.0-bae7334",
+    "y-websocket": "^1.5.0"
   }
 }
