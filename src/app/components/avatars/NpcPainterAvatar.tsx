@@ -15,8 +15,13 @@ export default function Avatar({
   return (
     <Popover.Root>
       <Popover.Trigger>
-      <div className="relative"><NpcAvatar text={npc.shortName} className={npc.className} />
-        {npc.npcState === NPCState.Painting && <div className={`absolute top-0 right-0 w-full h-full rounded-full animate-ping ${npc.className}`}></div>}
+        <div className="relative">
+          <NpcAvatar text={npc.shortName} className={npc.className} />
+          {npc.npcState === NPCState.Working && (
+            <div
+              className={`absolute top-0 right-0 w-full h-full rounded-full animate-ping ${npc.className}`}
+            ></div>
+          )}
         </div>
       </Popover.Trigger>
       <Popover.Portal>
@@ -32,7 +37,7 @@ export default function Avatar({
                 type: "paint",
               });
             }}
-            disabled={npc.npcState !== NPCState.Painting}
+            disabled={npc.npcState !== NPCState.Working}
           >
             I can paint that!
           </Button>

@@ -103,7 +103,7 @@ export default class Chat implements PartyServer {
 
   async onRequest(req: PartyRequest) {
     const states = this.awareness?.getStates() ?? {};
-    console.log(this.awareness);
+    console.log("awareness state", this.awareness);
 
     if (req.method === "GET") {
       return new Response(JSON.stringify(serializable(states), null, 2));

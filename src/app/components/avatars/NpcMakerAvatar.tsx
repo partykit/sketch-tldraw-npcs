@@ -1,6 +1,5 @@
 import { useTldraw } from "@/app/hooks/tldraw-context";
 import NpcAvatar from "./NpcAvatar";
-import { NPCState } from "@/partykit/utils/npc";
 import * as Popover from "@radix-ui/react-popover";
 import NpcMakerDrawButton from "./NpcMakerDrawButton";
 

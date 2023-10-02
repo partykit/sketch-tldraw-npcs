@@ -13,7 +13,7 @@ export const WEBSOCKET_PROTOCOL =
     ? "ws"
     : "wss";
 
-export default function Whitedraw() {
+export default function Whiteboard() {
   const { setEditor } = useTldraw();
 
   const store = useYjsStore({

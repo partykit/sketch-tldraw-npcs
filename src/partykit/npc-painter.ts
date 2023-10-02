@@ -19,7 +19,11 @@ export default class NPCPainter extends NPC {
     const msg = JSON.parse(message as string);
 
     if (msg.type === "summon") {
-      this.tldraw!.updatePresence({ userName: "🧑‍🎨", color: "#ec4899", chatMessage: "Painter" });
+      this.tldraw!.updatePresence({
+        userName: "🧑‍🎨",
+        color: "#ec4899",
+        chatMessage: "Painter",
+      });
     } else if (msg.type === "paint") {
       if (!this.npcMemory.starId) return;
       const map = this.tldraw!.doc?.getMap(this.tldraw!.roomId);
@@ -61,7 +65,7 @@ export default class NPCPainter extends NPC {
   async onNewStarShape(shape: TLShape) {
     const x = shape.x + (shape.props as TLShapeProps).w / 2;
     const y = shape.y + (shape.props as TLShapeProps).h / 2;
-    this.changeState(NPCState.Painting);
+    this.changeState(NPCState.Working);
     await this.travel(x, y);
     this.npcMemory["starId"] = shape.id;
     const oh = `O${"h".repeat(1 + Math.floor(Math.random() * 6))}`;

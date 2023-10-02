@@ -107,7 +107,7 @@ export default class NPCPoet extends NPC {
         onFunctionCall: async (name: string, args: any) => {
           //console.log("onFunctionCall (callback)", name, JSON.stringify(args));
           if (name === "drawShapes") {
-            this.changeState(NPCState.Making);
+            this.changeState(NPCState.Working);
             const { shapes } = args;
             for (const shape of shapes) {
               console.log(

@@ -20,8 +20,7 @@ export enum NPCState {
   NotConnected,
   Idle,
   Thinking,
-  Painting,
-  Making,
+  Working,
 }
 
 export type SummonMessage = {
