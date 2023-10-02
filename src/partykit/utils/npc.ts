@@ -19,6 +19,7 @@ import { getCentroidForEmbassy } from "@/shared/embassy";
 export enum NPCState {
   NotConnected,
   Idle,
+  Thinking,
   Painting,
   Making,
 }
@@ -199,6 +200,43 @@ export default class NPC implements PartyServer {
     ]).finally(() => {
       clearInterval(interval);
     });
+  }
+
+  circle(radius: number, centralX: number, centralY: number) {
+    const startTime = Date.now();
+    const MOVING_CURSOR_SPEED = 0.5;
+
+    this.changeState(NPCState.Thinking);
+
+    // Make a function to update the localStateField. We'll call this every 10ms
+    const updatePosition = async () => {
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - startTime;
+      const k = 1000 / MOVING_CURSOR_SPEED;
+      const t = (elapsedTime % k) / k;
+      const x = centralX + radius * Math.cos(2 * Math.PI * t);
+      const y = centralY + radius * Math.sin(2 * Math.PI * t);
+      await this.tldraw!.updatePresence({ cursor: { x, y } });
+    };
+
+    // Call updatePosition every 10ms, and cancel after 5s
+    // Remember that updatePosition is async
+    const interval = setInterval(async () => {
+      // If we're not in the thinking state, stop circling
+      if (this.npcState !== NPCState.Thinking) {
+        clearInterval(interval);
+        return;
+      }
+
+      await updatePosition();
+    }, 10);
+
+    setTimeout(() => {
+      if (interval) {
+        clearInterval(interval);
+        this.changeState(NPCState.Idle);
+      }
+    }, 3000);
   }
 
   onAwarenessUpdate() {

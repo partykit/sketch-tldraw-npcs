@@ -76,9 +76,15 @@ export default class NPCPoet extends NPC {
     const msg = JSON.parse(message as string);
 
     if (msg.type === "summon") {
-      this.tldraw!.updatePresence({ userName: "👷", color: "#0891b2", chatMessage: "Maker" });
+      this.tldraw!.updatePresence({
+        userName: "👷",
+        color: "#0891b2",
+        chatMessage: "Maker",
+      });
     } else if (msg.type === "boxes") {
       await this.sendChatMessage("Ok I need to think about this...");
+      this.changeState(NPCState.Thinking);
+      this.circle(10, this.embassy!.x, this.embassy!.y);
       const messages = [
         ...AI_PROMPT,
         {

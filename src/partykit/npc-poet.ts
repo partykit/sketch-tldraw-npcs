@@ -44,16 +44,14 @@ export default class NPCPoet extends NPC {
     const msg = JSON.parse(message as string);
 
     if (msg.type === "summon") {
-      this.tldraw!.updatePresence({ userName: "👨‍🎤", color: "#84cc16", chatMessage: "Poet" });
+      this.tldraw!.updatePresence({
+        userName: "👨‍🎤",
+        color: "#84cc16",
+        chatMessage: "Poet",
+      });
     } else if (msg.type === "animate") {
       const animateMessage = msg as AnimateMessage;
-      this.npcMemory = {
-        ...this.npcMemory,
-        centralX: this.embassy!.x,
-        centralY: this.embassy!.y,
-        radius: animateMessage.radius,
-      };
-      this.animateNpc();
+      this.circle(animateMessage.radius, this.embassy!.x, this.embassy!.y);
     } else if (msg.type === "compose") {
       const composeMessage = msg as ComposeMessage;
       // create a new x and y which are 100 away from msg.x and msg.y in a random direction
