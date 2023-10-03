@@ -3,22 +3,26 @@
 import { Editor, Tldraw, useEditor } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useTldraw } from "@/app/hooks/tldraw-context";
-import { useYjsStore } from "@/app/hooks/useYjsStore";
+import { useYjsStore } from "@/app/providers/useYjsStore";
 
+/*
 export const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_HOST!;
-
 export const WEBSOCKET_PROTOCOL =
   PARTYKIT_HOST?.startsWith("localhost") ||
   PARTYKIT_HOST?.startsWith("127.0.0.1")
     ? "ws"
     : "wss";
+*/
 
 export default function Whiteboard() {
   const { setEditor } = useTldraw();
 
   const store = useYjsStore({
     roomId: "dolphin-example-2",
-    hostUrl: `${WEBSOCKET_PROTOCOL}:${PARTYKIT_HOST}/party/`,
+    // If using WebSocketProvider in useYjsStore.tsx:
+    //hostUrl: `${WEBSOCKET_PROTOCOL}:${PARTYKIT_HOST}/party/`,
+    // If using YPartyKitProvider in useYjsStore.tsx:
+    hostUrl: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
   });
 
   const handleMount = (editor: Editor) => {

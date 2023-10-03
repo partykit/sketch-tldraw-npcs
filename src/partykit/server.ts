@@ -5,71 +5,48 @@
  * ws://127.0.0.1:1999/party
  */
 
-import { PartyKitServer, PartyKitRoom } from "partykit/server";
-import { onConnect } from "y-partykit";
-import { YPartyKitStorage } from "y-partykit/storage";
+/*
+ * Can be used with
+ * https://github.com/tldraw/tldraw-yjs-example/tree/main/src
+ * and the hostName
+ * ws://127.0.0.1:1999/party
+ */
 
-import { type TLInstancePresence, TLRecord } from "@tldraw/tldraw";
+import type * as Party from "partykit/server";
+import { onConnect, unstable_getYDoc, type YPartyKitOptions } from "y-partykit";
+import type { Doc as YDoc } from "yjs";
+import { YKeyValue } from "y-utility/y-keyvalue";
+import { type TLRecord } from "@tldraw/tldraw";
 
-type YDocRoom = {
-  ydoc: any;
-  awareness: any;
-} & PartyKitRoom;
+export default class YjsServer implements Party.Server {
+  yjsOptions: YPartyKitOptions = { persist: true, gc: true };
+  constructor(public party: Party.Party) {}
 
-//export default { onConnect };
-export default {
-  onConnect(ws, room) {
-    console.log("[main] onConnect: someone connected");
-    return onConnect(ws, room, {
-      persist: false,
-      callback: {
-        async handler(ydoc) {
-          // called every few seconds after edits
-          /*
-          try {
-            (room as YDocRoom).ydoc = ydoc;
-            const awareness = (ydoc as any).awareness;
-            (room as YDocRoom).awareness = awareness;
-            const states = awareness.getStates() as Map<
-              number,
-              { presence: TLInstancePresence }
-            >;
-            // pretty print the whole of states
-            //console.log("states", JSON.stringify(Array.from(states), null, 2));
-          } catch (e) {
-            console.error(e);
-          }*/
-        },
-      },
-    });
-  },
-  async onRequest(req, room) {
-    const storage = new YPartyKitStorage(room.storage);
-    const ydoc = await storage.getYDoc(room.id);
-    const awareness = (ydoc as any).awareness;
-    const states =
-      (awareness?.getStates() as Map<
-        number,
-        { presence: TLInstancePresence }
-      >) || {};
+  getOpts() {
+    // options must match when calling unstable_getYDoc and onConnect
+    const opts: YPartyKitOptions = {
+      persist: true,
+      callback: { handler: (yDoc) => this.handleYDocChange(yDoc) },
+    };
+    return opts;
+  }
 
-    if (req.method === "GET") {
-      if (!ydoc) {
-        return new Response("No ydoc yet", { status: 404 });
-      }
-      const map = ydoc.getMap(`tl_${room.id}`);
-      return new Response(
-        JSON.stringify(
-          {
-            ydoc: map,
-            awareness: states,
-          },
-          null,
-          2
-        )
-      );
-    }
+  async onRequest() {
+    const yDoc = await unstable_getYDoc(this.party, this.getOpts());
+    const room = `tl_${this.party.id}`;
+    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(room);
+    const yStore = new YKeyValue(yArr);
 
-    return new Response("Unsupported method", { status: 400 });
-  },
-} satisfies PartyKitServer;
+    return new Response(JSON.stringify({ [room]: yStore }, null, 2));
+  }
+  onConnect(conn: Party.Connection) {
+    return onConnect(conn, this.party, this.getOpts());
+  }
+  handleYDocChange(yDoc: YDoc) {
+    // called on every ydoc change
+    //console.log("ydoc changed");
+    /*const awareness = (yDoc as any).awareness;
+    const states = awareness.getStates();
+    console.log("states", states);*/
+  }
+}
