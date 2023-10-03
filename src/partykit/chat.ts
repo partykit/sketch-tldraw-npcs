@@ -1,13 +1,4 @@
-import type {
-  PartyServer,
-  PartyServerOptions,
-  PartyConnection,
-  PartyConnectionContext,
-  Party,
-  PartyWorker,
-  PartyRequest,
-} from "partykit/server";
-
+import type * as Party from "partykit/server";
 import * as Y from "yjs";
 import YProvider from "y-partykit/provider";
 
@@ -33,15 +24,15 @@ export type SendMessage = {
   userId: string;
 };
 
-export default class Chat implements PartyServer {
-  constructor(readonly party: Party) {}
+export default class Chat implements Party.Server {
+  constructor(readonly party: Party.Party) {}
 
   doc: Y.Doc | undefined;
   provider: YProvider | undefined;
   awareness: YProvider["awareness"] | undefined;
   users: User[] = [];
 
-  async onConnect(connection: PartyConnection, ctx: PartyConnectionContext) {
+  async onConnect(connection: Party.Connection, ctx: Party.ConnectionContext) {
     if (!this.awareness) {
       // This is shared amongst all connections, So if it's not here already,
       // we need to set it up
@@ -59,7 +50,7 @@ export default class Chat implements PartyServer {
     }
   }
 
-  onMessage(message: string, connection: PartyConnection) {
+  onMessage(message: string, connection: Party.Connection) {
     const msg = JSON.parse(message as string);
     switch (msg.type) {
       case "chat": {
@@ -101,7 +92,7 @@ export default class Chat implements PartyServer {
     );
   }
 
-  async onRequest(req: PartyRequest) {
+  async onRequest(req: Party.Request) {
     const states = this.awareness?.getStates() ?? {};
     console.log("awareness state", this.awareness);
 
