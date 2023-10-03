@@ -9,14 +9,17 @@
 
 import {
   shapeIdValidator,
+  TLShapeId,
   type TLInstancePresence,
   type TLPageId,
+  type TLRecord,
 } from "@tldraw/tldraw";
-import * as Y from "yjs";
+import { Doc as YDoc } from "yjs";
+import { YKeyValue } from "y-utility/y-keyvalue";
 import YProvider from "y-partykit/provider";
 
 export default class TldrawUtils {
-  doc: Y.Doc | undefined;
+  doc: YDoc | undefined;
   awareness: YProvider["awareness"] | undefined;
 
   clientId: number | undefined;
@@ -24,9 +27,10 @@ export default class TldrawUtils {
   userId: string | undefined;
   roomId: string | undefined;
   pageId: TLPageId | undefined;
+  store: YKeyValue<TLRecord> | undefined;
 
   async init(
-    doc: Y.Doc,
+    doc: YDoc,
     awareness: YProvider["awareness"],
     clientId: number,
     serverName: string,
@@ -40,6 +44,9 @@ export default class TldrawUtils {
     this.presenceId = InstancePresenceRecordType.createId(clientId.toString());
     this.userId = serverName;
     this.roomId = `tl_${partyId}`;
+
+    const yArr = this.doc.getArray<{ key: string; val: TLRecord }>(this.roomId);
+    this.store = new YKeyValue(yArr);
 
     return this;
   }
@@ -101,7 +108,7 @@ export default class TldrawUtils {
   }
 
   updateShape(shape: any, shapeFields?: any) {
-    const map = this.doc!.getMap(this.roomId);
+    if (!this.store) return;
     const props = {
       ...shape.props,
       ...(shapeFields?.props ?? {}),
@@ -111,7 +118,7 @@ export default class TldrawUtils {
       ...(shapeFields ?? {}),
       props,
     };
-    map.set(newShape.id, newShape);
+    this.store.set(newShape.id, newShape);
   }
 
   async getShapeId(id?: string) {
@@ -157,6 +164,7 @@ export default class TldrawUtils {
     geo: "rectangle" | "triangle" | "circle"
   ) {
     console.log("createGeoShape", x, y, width, height, geo);
+    if (!this.store) return;
     const shapeId = await this.getShapeId();
     const shape = {
       id: shapeId,
@@ -186,17 +194,17 @@ export default class TldrawUtils {
       parentId: this.pageId,
       index: this.getNewHighestIndex(),
       typeName: "shape",
-    };
-    const map = this.doc!.getMap(this.roomId);
-    map.set(shapeId, shape);
+    } as TLRecord;
+    this.store.set(shapeId, shape);
     return shapeId;
   }
 
   getNewHighestIndex() {
     // Get all indexes of records with `parentId: pageId as TLPageId`
-    // We can use map.entries, or map.values
-    const map = this.doc!.getMap(this.roomId);
-    const records = Array.from(map.values());
+    if (!this.store) {
+      return "a1";
+    }
+    const records = this.store.yarray.map((record) => record.val as any);
     const indexes = records
       .filter((record) => record.parentId === this.pageId)
       .map((record) => record.index);

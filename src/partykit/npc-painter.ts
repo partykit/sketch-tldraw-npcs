@@ -2,7 +2,12 @@ import NPC, { NPCState } from "./utils/npc";
 
 import type { PartyConnection } from "partykit/server";
 
-import type { TLShape, TLShapeId, TLShapeProps } from "@tldraw/tldraw";
+import type {
+  TLShape,
+  TLShapeId,
+  TLShapeProps,
+  TLRecord,
+} from "@tldraw/tldraw";
 
 import * as Y from "yjs";
 
@@ -26,40 +31,40 @@ export default class NPCPainter extends NPC {
       });
     } else if (msg.type === "paint") {
       if (!this.npcMemory.starId) return;
-      const map = this.tldraw!.doc?.getMap(this.tldraw!.roomId);
-      const star = map!.get(this.npcMemory.starId) as TLShape;
-      this.tldraw!.updateShape(star, {
+      if (!this.tldraw?.store) return;
+      const star = this.tldraw.store.get(this.npcMemory.starId) as TLShape;
+      this.tldraw.updateShape(star, {
         props: { fill: "pattern", color: "light-red" },
       });
-      this.tldraw!.updatePresence({ chatMessage: "Painter" });
+      this.tldraw.updatePresence({ chatMessage: "Painter" });
       await this.travel(this.embassy!.x, this.embassy!.y);
       this.changeState(NPCState.Idle);
     }
   }
 
   async onContentUpdate() {
-    const map = await super.onContentUpdate();
-    if (!map) return;
+    const store = await super.onContentUpdate();
+    if (!store) return;
 
     // Watch for shapes which are stars
     // Characteristics: parentId == this.tldraw.pageId, typeName == "shape", props.geo == "star"
-    map.forEach(async (value: unknown, id: string, map: Y.Map<unknown>) => {
-      const record = value as TLShape;
-      const props = record.props as TLShapeProps;
+    store.yarray.forEach(async (record: { key: string; val: TLRecord }) => {
+      const shape = record.val as TLShape;
+      const props = shape.props as TLShapeProps;
       if (
         this.npcState === NPCState.Idle &&
-        record.typeName === "shape" &&
-        record.parentId === this.tldraw!.pageId &&
+        shape.typeName === "shape" &&
+        shape.parentId === this.tldraw!.pageId &&
         props.geo === "star" &&
         props.fill !== "pattern" &&
         props.color !== "light-red"
       ) {
-        await this.onNewStarShape(record);
+        await this.onNewStarShape(shape);
       }
     });
     //console.log("[npc] onContentUpdate", JSON.stringify(this.embassy, null, 2));
 
-    return map;
+    return store;
   }
 
   async onNewStarShape(shape: TLShape) {

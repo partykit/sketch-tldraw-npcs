@@ -1,17 +1,11 @@
-import type {
-  Party,
-  PartyServer,
-  PartyConnection,
-  PartyConnectionContext,
-  PartyRequest,
-} from "partykit/server";
-
+import type * as Party from "partykit/server";
 import type { TLShape } from "@tldraw/tldraw";
-
-import * as Y from "yjs";
 import YPartyKitProvider from "y-partykit/provider";
+import { Doc as YDoc } from "yjs";
+import { YKeyValue } from "y-utility/y-keyvalue";
 
 import TldrawUtils from "./tldraw";
+import { type TLRecord } from "@tldraw/tldraw";
 
 import { getCentroidForEmbassy } from "@/shared/embassy";
 
@@ -37,10 +31,10 @@ export type StateMessage = {
   state: NPCState;
 };
 
-export default class NPC implements PartyServer {
-  constructor(readonly party: Party) {}
+export default class NPC implements Party.Server {
+  constructor(readonly party: Party.Party) {}
 
-  doc: Y.Doc | undefined;
+  doc: YDoc | undefined;
   provider: YPartyKitProvider | undefined;
   awareness: YPartyKitProvider["awareness"] | undefined;
 
@@ -50,7 +44,7 @@ export default class NPC implements PartyServer {
 
   npcState: NPCState = NPCState.NotConnected;
 
-  async onConnect(connection: PartyConnection, ctx: PartyConnectionContext) {
+  async onConnect(connection: Party.Connection, ctx: Party.ConnectionContext) {
     if (!this.tldraw) {
       // This is shared amongst all connections, So if it's not here already,
       // we need to set it up
@@ -68,7 +62,7 @@ export default class NPC implements PartyServer {
         partyId
       );*/
 
-      this.doc = new Y.Doc();
+      this.doc = new YDoc();
       this.provider = new YPartyKitProvider(host, partyId, this.doc);
       this.awareness = this.provider.awareness;
 
@@ -88,7 +82,7 @@ export default class NPC implements PartyServer {
     connection.send(JSON.stringify({ type: "state", state: this.npcState }));
   }
 
-  onClose(connection: PartyConnection) {
+  onClose(connection: Party.Connection) {
     const count = Array.from(this.party.getConnections()).length;
     if (count === 0) {
       console.log("Final connection closed, shutting down");
@@ -113,13 +107,15 @@ export default class NPC implements PartyServer {
     );
   }
 
-  async onMessage(message: string | ArrayBuffer, connection: PartyConnection) {
+  async onMessage(message: string | ArrayBuffer, connection: Party.Connection) {
+    if (!this.tldraw) return;
+
     const msg = JSON.parse(message as string);
     if (msg.type === "summon") {
       const summonMessage = msg as SummonMessage;
       const { pageId } = summonMessage;
       if (!this.embassy) return;
-      await this.tldraw!.summon(pageId, {
+      await this.tldraw.summon(pageId, {
         cursor: {
           x: this.embassy.x + Math.random() * 70 - 35,
           y: this.embassy.y + Math.random() * 70 - 35,
@@ -129,7 +125,7 @@ export default class NPC implements PartyServer {
       // Keep this NPC alive
       this.party.storage.setAlarm(new Date().getTime() + 1000 * 30);
     } else if (msg.type === "banish") {
-      this.tldraw!.banish();
+      this.tldraw.banish();
       this.changeState(NPCState.NotConnected);
     }
   }
@@ -246,17 +242,22 @@ export default class NPC implements PartyServer {
   }
 
   async onContentUpdate() {
-    const map = this.doc?.getMap(this.tldraw!.roomId);
-    if (!map) return;
+    if (!this.doc) return;
+    if (!this.tldraw) return;
+    const yArr = this.doc.getArray<{ key: string; val: TLRecord }>(
+      this.tldraw.roomId
+    );
+    const yStore = new YKeyValue(yArr);
+
     const { createShapeId } = await import("@tldraw/tldraw");
     const embassyId = createShapeId("embassy");
-    const embassy = map.get(embassyId) as TLShape | undefined;
+    const embassy = yStore.get(embassyId) as TLShape | undefined;
 
     if (!embassy) {
       if (this.embassy) {
         this.embassy = undefined;
         this.changeState(NPCState.NotConnected);
-        this.tldraw?.banish();
+        this.tldraw.banish();
       }
     }
     if (embassy) {
@@ -266,6 +267,6 @@ export default class NPC implements PartyServer {
       }
     }
 
-    return map; // so that subclasses can use it
+    return yStore; // so that subclasses can use it
   }
 }
