@@ -21,7 +21,7 @@ tldraw is a client-side app that can use a Yjs backend as a sync server. PartyKi
 
 What we're additionally doing here is:
 
-- we have PartyKit servers such as `npc-poet.ts` which joins the same Yjs room as the tldraw clients. It can monitor the canvas, add shapes and text to the canvas, and also take part in "presence": it can update a user object to drive a cursor around the screen.
+- we have PartyKit servers such as `npc-poet.ts`. These join the same Yjs room as the tldraw clients. They can monitor the canvas, add shapes and text to the canvas, and also take part in "presence": NPC PartyKit servers can update a user object to drive a cursor around the screen.
 - in the client, the user can interact with these NPCs and ask them to perform tasks.
 
 ![architecture](/assets/architecture-sm.png)
