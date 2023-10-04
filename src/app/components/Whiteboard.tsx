@@ -18,7 +18,7 @@ export default function Whiteboard() {
   const { setEditor } = useTldraw();
 
   const store = useYjsStore({
-    roomId: "dolphin-example-2",
+    roomId: "dolphin-example-3",
     // If using WebSocketProvider in useYjsStore.tsx:
     //hostUrl: `${WEBSOCKET_PROTOCOL}:${PARTYKIT_HOST}/party/`,
     // If using YPartyKitProvider in useYjsStore.tsx:

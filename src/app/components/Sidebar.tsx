@@ -24,7 +24,7 @@ export default function Sidebar() {
   const socket = usePartySocket({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST!,
     party: "chat",
-    room: "dolphin-example-2",
+    room: "dolphin-example-3",
     //startClosed: true,
     onMessage: (message) => {
       const msg = JSON.parse(message.data);
